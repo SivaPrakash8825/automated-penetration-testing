@@ -7,6 +7,7 @@ const register = require("./schema/register");
 const path = require("path");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
+const { exec } = require("child_process");
 
 dotenv.config({
   path: "./.env",
@@ -23,7 +24,7 @@ app.use(
 
 async function checkConnection() {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/pentesting");
+    await mongoose.connect(process.env.ATLAS_URL);
     console.log("Connected");
   } catch (error) {
     console.log("Not Connected :", error.message);
@@ -83,6 +84,7 @@ app.post("/login", async (req, res) => {
         secure: true,
       };
       res.cookie("pentest", token, option);
+      console.log(user);
       return res.status(200).send(user);
     }
 
@@ -91,6 +93,25 @@ app.post("/login", async (req, res) => {
     // console.log(e);
     res.status(400).send(e);
   }
+});
+
+app.post("/scan", (req, res) => {
+  const { url } = req.body;
+  const command = `nmap -sV -oG - ${url}`;
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.error("Error:", error);
+      return;
+    }
+
+    if (stderr) {
+      console.error("stderr:", stderr);
+      return;
+    }
+
+    console.log("Output:", stdout);
+    return res.status(200).send(stdout);
+  });
 });
 
 app.listen(3030, () => {

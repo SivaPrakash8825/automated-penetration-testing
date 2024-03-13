@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import Button from "./Button";
 import axios from "axios";
 import AngerTag from "./AngerTag";
-
+import Authentication from "@/utils/Authentication";
+import { useRouter } from "next/navigation";
 type Props = {
   type: string;
 };
 
 const Auth = ({ type }: Props) => {
+  const route = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUserName] = useState("");
@@ -28,10 +30,15 @@ const Auth = ({ type }: Props) => {
   };
   const Login = async () => {
     if (password && email) {
-      await axios.post("http://localhost:3030/login", {
+      const { data } = await axios.post("http://localhost:3030/login", {
         email: email,
         password: password,
       });
+      console.log(data);
+
+      if (data) {
+        route.push("/home");
+      }
     } else {
       alert("fill the details log");
     }
@@ -76,6 +83,7 @@ const Auth = ({ type }: Props) => {
           title={`${type == "signin" ? "login" : "register"}`}
           onclick={() => (type == "signin" ? Login() : Register())}
         />
+
         <AngerTag
           title={`${type == "signin" ? "signup" : "signin"}`}
           page={`auth/${type == "signin" ? "signup" : "signin"}`}
