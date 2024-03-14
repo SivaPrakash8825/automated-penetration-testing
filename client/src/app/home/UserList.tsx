@@ -61,25 +61,25 @@ const UserList = (props: Props) => {
             </section>
             {/* {"status"} */}
             <section className=" w-full h-10  flex justify-center items-center px-10">
-              <div className=" relative w-6 h-6 grid place-content-center text-xs bg-purple-600 text-white rounded-lg">
+              <div className=" relative w-6 h-6 grid place-content-center text-xs bg-red-700 text-white rounded-lg">
                 <FaCheck />
                 <p className="absolute -bottom-4 text-black text-xs left-1/2 -translate-x-[50%] ">
                   schedule
                 </p>
               </div>
-              <div className=" grow h-1 bg-purple-600"></div>
-              <div className=" w-6 h-6 relative grid place-content-center text-xs bg-purple-600 text-white rounded-lg">
+              <div className=" grow h-1 bg-yellow-300"></div>
+              <div className=" w-6 h-6 relative grid place-content-center text-xs bg-yellow-300 text-white rounded-lg">
                 <FaCheck />
                 <p className="absolute -bottom-4 text-black text-xs left-1/2 -translate-x-[50%] text-nowrap ">
                   in-progress
                 </p>
               </div>
 
-              <div className=" grow h-1 bg-gray-200"></div>
-              <div className=" w-6 h-6 relative grid place-content-center text-xs bg-purple-300 text-white rounded-lg">
-                <TiWarning />
-                <p className="absolute -bottom-4 text-black text-xs left-1/2 -translate-x-[50%] opacity-[.5] ">
-                  completed
+              <div className=" grow h-1 bg-green-500"></div>
+              <div className=" w-6 h-6 relative grid place-content-center text-xs bg-green-500 text-white rounded-lg">
+                <FaCheck />
+                <p className="absolute -bottom-4 text-black text-xs left-1/2 -translate-x-[50%] text-nowrap ">
+                  Completed
                 </p>
               </div>
             </section>

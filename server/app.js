@@ -4,10 +4,14 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const cookieparser = require("cookie-parser");
 const register = require("./schema/register");
+const { Server } = require("socket.io");
 const path = require("path");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const { exec } = require("child_process");
+const http = require("http");
+
+const https = require("https");
 
 dotenv.config({
   path: "./.env",
@@ -21,6 +25,28 @@ app.use(
     credentials: true,
   })
 );
+const socket = http.createServer(app);
+const io = new Server(socket, {
+  cors: {
+    origin: "http://localhost:3000",
+    credentials: true,
+  },
+});
+
+io.on("connection", (server) => {
+  server.on("join_team", (value) => {
+    console.log(value.msg);
+    server.join(value.msg);
+  });
+  server.on("send_mes", (value) => {
+    server.to(value.curchat).emit("rec_mes", {
+      user: value.sender,
+      sendermsg: value.msg,
+      roomno: value.curchat,
+    });
+    console.log(value.sender);
+  });
+});
 
 async function checkConnection() {
   try {
@@ -95,51 +121,149 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/scan", (req, res) => {
-  const { url } = req.body;
-  console.log(url);
+function extractIPv4Addresses(dnsResponse) {
+  const ipv4Addresses = [];
 
-  exec(
-    `nslookup https://portfolio-sivaprakash8825.vercel.app`,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.log(error);
-        // reject(error);
-        return;
-      }
-
-      if (stderr) {
-        console.log(stderr);
-      }
-      console.log(stdout);
-      const lines = stdout.split("\n").filter((line) => line.trim() !== "");
-
-      const command = `nmap -sV -oG - ${lines[lines.length - 1].trim()}`;
-      exec(command, (error1, stdout1, stderr1) => {
-        if (error1) {
-          console.error("Error:", error1);
-          return;
-        }
-
-        if (stderr1) {
-          console.error("stderr:", stderr1);
-          return;
-        }
-
-        return res.status(200).send(stdout1);
-      });
+  for (const line of dnsResponse) {
+    const matches = line.match(/\b(?:\d{1,3}\.){3}\d{1,3}\b/);
+    if (matches) {
+      ipv4Addresses.push(matches[0]);
     }
-  );
-});
-
-function getIpAddress(domainName) {
-  console.log(domainName);
-  return new Promise((resolve, reject) => {});
+  }
+  return ipv4Addresses;
 }
 
-// Usage
-const domainName = "https://portfolio-sivaprakash8825.vercel.app";
+app.post("/scan", (req, res) => {
+  const { url } = req.body;
 
-app.listen(3030, () => {
+  validateUrl(url, (err, isValid) => {
+    if (err) {
+      return res.status(200).send("invalid");
+    } else if (isValid) {
+      exec(`nslookup ${url}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(error);
+          return res.status(500).send("Error performing DNS lookup");
+        }
+
+        if (stderr) {
+          console.error(stderr);
+        }
+
+        const lines = stdout.split("\n").filter((line) => line.trim() !== "");
+        const ipAddress = extractIPv4Addresses(lines);
+        console.log(ipAddress);
+        exec(
+          `nmap -sV -oG - ${ipAddress[ipAddress.length - 1]}`,
+          (error1, stdout1, stderr1) => {
+            if (error1) {
+              console.error("Error:", error1);
+              return res.status(500).send("Error performing port scan");
+            }
+
+            if (stderr1) {
+              console.error("stderr:", stderr1);
+            }
+
+            const openPorts = [];
+            const lines = stdout1
+              .split("\n")
+              .filter((line) => line.trim() !== "");
+            console.log(lines);
+            for (const line of lines) {
+              let parts = line.split("\t");
+              if (parts[0].startsWith("Host")) {
+                for (const value of parts) {
+                  if (value.trim().startsWith("Status")) {
+                    console.log(value.trim());
+                  }
+                  if (value.trim().startsWith("Ports")) {
+                    const arr = value.split(",");
+                    console.log(arr.length);
+                  }
+                }
+              }
+            }
+            // lines.forEach((line) => {
+            //   if (parts.length >= 4 && parts[parts.length - 1].includes("open")) {
+            //     console.log(parts);
+            //     const port = {
+            //       portNumber: parts[1].split("/")[0],
+            //       protocol: parts[1].split("/")[1],
+            //       service: parts[2],
+            //     };
+            //     openPorts.push(port);
+            //   }
+            // });
+            console.log(openPorts);
+            // Generating report
+            const report = {
+              numberOfVulnerablePorts: openPorts.length,
+              detailedReport: openPorts.map((port) => ({
+                portNumber: port.portNumber,
+                protocol: port.protocol,
+                service: port.service,
+                recommendedAction: "Recommendation goes here", // Add your recommendation here
+              })),
+            };
+
+            return res.status(200).json(report);
+          }
+        );
+      });
+    } else {
+      console.log("invalid");
+      return res.status(200).send("invalid");
+    }
+  });
+});
+function validateUrl(url, callback) {
+  console.log(url);
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    callback(null, false); // URL must start with http:// or https://
+  }
+
+  const protocol = url.startsWith("https://") ? https : http;
+
+  const req = protocol.get(url, (res) => {
+    // console.log(res.statusCode);
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      callback(null, true); // URL is valid
+    } else {
+      callback(null, false); // URL is not valid
+    }
+  });
+
+  req.on("error", (err) => {
+    callback(err); // Error occurred during the request
+  });
+}
+
+function parseNmapOutput(nmapOutput) {
+  // Parsing Nmap output to extract vulnerable ports and details
+  const lines = nmapOutput.split("\n");
+  const vulnerablePorts = [];
+
+  lines.forEach((line) => {
+    if (line.includes("Ports:")) {
+      const portInfo = line.split("\t");
+      const portNumber = portInfo[1].split("/")[0];
+      const protocol = portInfo[1].split("/")[1];
+      const services = portInfo[2];
+      const recommendedAction = "Perform further investigation";
+
+      vulnerablePorts.push({
+        portNumber,
+        protocol,
+        services,
+        recommendedAction,
+      });
+    }
+  });
+
+  return vulnerablePorts;
+}
+
+socket.listen(3030, () => {
   console.log(`listening on 3030`);
 });
