@@ -97,22 +97,48 @@ app.post("/login", async (req, res) => {
 
 app.post("/scan", (req, res) => {
   const { url } = req.body;
-  const command = `nmap -sV -oG - ${url}`;
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      console.error("Error:", error);
-      return;
-    }
+  console.log(url);
 
-    if (stderr) {
-      console.error("stderr:", stderr);
-      return;
-    }
+  exec(
+    `nslookup https://portfolio-sivaprakash8825.vercel.app`,
+    (error, stdout, stderr) => {
+      if (error) {
+        console.log(error);
+        // reject(error);
+        return;
+      }
 
-    console.log("Output:", stdout);
-    return res.status(200).send(stdout);
-  });
+      if (stderr) {
+        console.log(stderr);
+      }
+      console.log(stdout);
+      const lines = stdout.split("\n").filter((line) => line.trim() !== "");
+
+      const command = `nmap -sV -oG - ${lines[lines.length - 1].trim()}`;
+      exec(command, (error1, stdout1, stderr1) => {
+        if (error1) {
+          console.error("Error:", error1);
+          return;
+        }
+
+        if (stderr1) {
+          console.error("stderr:", stderr1);
+          return;
+        }
+
+        return res.status(200).send(stdout1);
+      });
+    }
+  );
 });
+
+function getIpAddress(domainName) {
+  console.log(domainName);
+  return new Promise((resolve, reject) => {});
+}
+
+// Usage
+const domainName = "https://portfolio-sivaprakash8825.vercel.app";
 
 app.listen(3030, () => {
   console.log(`listening on 3030`);
