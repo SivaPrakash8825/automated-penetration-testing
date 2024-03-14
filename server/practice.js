@@ -1,46 +1,22 @@
-const amqp = require("amqplib/callback_api");
+const validUrl = require("valid-url");
 
-amqp.connect("amqp://localhost", function (error0, connection) {
-  if (error0) {
-    throw error0;
+// Function to check if a URL is valid
+function checkUrl(url) {
+  if (validUrl.isUri(url)) {
+    console.log(`${url} is a valid URL.`);
+  } else {
+    console.log(`${url} is not a valid URL.`);
   }
-  connection.createChannel(function (error1, channel) {
-    if (error1) {
-      throw error1;
-    }
-    var queue = "hello";
+}
 
-    channel.assertQueue(queue, {
-      durable: false,
-    });
-    console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
-    channel.consume(
-      queue,
-      function (msg) {
-        console.log(" [x] Received %s", msg.content.toString());
-      },
-      {
-        noAck: true,
-      }
-    );
-  });
-});
-amqp.connect("amqp://localhost", function (error0, connection) {
-  if (error0) {
-    throw error0;
-  }
-  connection.createChannel(function (error1, channel) {
-    if (error1) {
-      throw error1;
-    }
-    var queue = "hello";
-    var msg = "Hello world";
+// Test cases
+const urls = [
+  "https://www.example.com",
+  "ftp://ftp.example.com",
+  "invalid-url",
+  "http://localhost:3000",
+];
 
-    channel.assertQueue(queue, {
-      durable: false,
-    });
-
-    channel.sendToQueue(queue, Buffer.from(msg));
-    console.log(" [x] Sent %s", msg);
-  });
+urls.forEach((url) => {
+  checkUrl(url);
 });

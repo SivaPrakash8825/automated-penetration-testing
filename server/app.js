@@ -10,9 +10,11 @@ const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const { exec } = require("child_process");
 const http = require("http");
-
+const amqp = require("amqplib/callback_api");
 const https = require("https");
+const urlvalid = require("valid-url");
 
+let indicator;
 dotenv.config({
   path: "./.env",
 });
@@ -34,19 +36,22 @@ const io = new Server(socket, {
 });
 
 io.on("connection", (server) => {
+  indicator = server;
+
   server.on("join_team", (value) => {
-    console.log(value.msg);
-    server.join(value.msg);
+    console.log(value);
+    server.join(value);
   });
-  server.on("send_mes", (value) => {
-    server.to(value.curchat).emit("rec_mes", {
-      user: value.sender,
-      sendermsg: value.msg,
-      roomno: value.curchat,
-    });
-    console.log(value.sender);
-  });
+  // server.on("send_mes", (value) => {
+  //   server.to(value.curchat).emit("rec_mes", {
+  //     user: value.sender,
+  //     sendermsg: value.msg,
+  //     roomno: value.curchat,
+  //   });
+  //   console.log(value.sender);
+  // });
 });
+app.use(cookieparser());
 
 async function checkConnection() {
   try {
@@ -64,7 +69,7 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/getcookie", async (req, res) => {
-  const val = req.cookies.pentest;
+  const val = req.cookies;
   console.log(val);
 });
 
@@ -133,90 +138,6 @@ function extractIPv4Addresses(dnsResponse) {
   return ipv4Addresses;
 }
 
-app.post("/scan", (req, res) => {
-  const { url } = req.body;
-
-  validateUrl(url, (err, isValid) => {
-    if (err) {
-      return res.status(200).send("invalid");
-    } else if (isValid) {
-      exec(`nslookup ${url}`, (error, stdout, stderr) => {
-        if (error) {
-          console.error(error);
-          return res.status(500).send("Error performing DNS lookup");
-        }
-
-        if (stderr) {
-          console.error(stderr);
-        }
-
-        const lines = stdout.split("\n").filter((line) => line.trim() !== "");
-        const ipAddress = extractIPv4Addresses(lines);
-        console.log(ipAddress);
-        exec(
-          `nmap -sV -oG - ${ipAddress[ipAddress.length - 1]}`,
-          (error1, stdout1, stderr1) => {
-            if (error1) {
-              console.error("Error:", error1);
-              return res.status(500).send("Error performing port scan");
-            }
-
-            if (stderr1) {
-              console.error("stderr:", stderr1);
-            }
-
-            const openPorts = [];
-            const lines = stdout1
-              .split("\n")
-              .filter((line) => line.trim() !== "");
-            console.log(lines);
-            for (const line of lines) {
-              let parts = line.split("\t");
-              if (parts[0].startsWith("Host")) {
-                for (const value of parts) {
-                  if (value.trim().startsWith("Status")) {
-                    console.log(value.trim());
-                  }
-                  if (value.trim().startsWith("Ports")) {
-                    const arr = value.split(",");
-                    console.log(arr.length);
-                  }
-                }
-              }
-            }
-            // lines.forEach((line) => {
-            //   if (parts.length >= 4 && parts[parts.length - 1].includes("open")) {
-            //     console.log(parts);
-            //     const port = {
-            //       portNumber: parts[1].split("/")[0],
-            //       protocol: parts[1].split("/")[1],
-            //       service: parts[2],
-            //     };
-            //     openPorts.push(port);
-            //   }
-            // });
-            console.log(openPorts);
-            // Generating report
-            const report = {
-              numberOfVulnerablePorts: openPorts.length,
-              detailedReport: openPorts.map((port) => ({
-                portNumber: port.portNumber,
-                protocol: port.protocol,
-                service: port.service,
-                recommendedAction: "Recommendation goes here", // Add your recommendation here
-              })),
-            };
-
-            return res.status(200).json(report);
-          }
-        );
-      });
-    } else {
-      console.log("invalid");
-      return res.status(200).send("invalid");
-    }
-  });
-});
 function validateUrl(url, callback) {
   console.log(url);
   if (!url.startsWith("http://") && !url.startsWith("https://")) {
@@ -263,6 +184,120 @@ function parseNmapOutput(nmapOutput) {
 
   return vulnerablePorts;
 }
+
+amqp.connect("amqp://localhost", function (error0, connection) {
+  if (error0) {
+    throw error0;
+  }
+  connection.createChannel(function (error1, channel) {
+    if (error1) {
+      throw error1;
+    }
+    const queue = "user_requests";
+    channel.assertQueue(queue, {
+      durable: false,
+    });
+    channel.prefetch(1);
+    app.post("/scan", (req, res) => {
+      const { userId, url } = req.body;
+
+      channel.sendToQueue(queue, Buffer.from(JSON.stringify({ userId, url })));
+      console.log(` [x] Request from user ${userId} added to queue`);
+
+      res.status(200).send("Request received and added to the queue");
+    });
+
+    channel.consume(
+      queue,
+      function (msg) {
+        const { userId, url } = JSON.parse(msg.content.toString());
+        console.log(` [x] Processing request from user ${userId}:`, url);
+        if (urlvalid.isUri(url)) {
+          exec(`nslookup ${url}`, (error, stdout, stderr) => {
+            if (error) {
+              console.error(error);
+              return res.status(500).send("Error performing DNS lookup");
+            }
+
+            if (stderr) {
+              console.error(stderr);
+            }
+
+            const lines = stdout
+              .split("\n")
+              .filter((line) => line.trim() !== "");
+            const ipAddress = extractIPv4Addresses(lines);
+            console.log(ipAddress);
+            exec(
+              `nmap -sV -oG - ${ipAddress[ipAddress.length - 1]}`,
+              (error1, stdout1, stderr1) => {
+                if (error1) {
+                  console.error("Error:", error1);
+                  return res.status(500).send("Error performing port scan");
+                }
+
+                if (stderr1) {
+                  console.error("stderr:", stderr1);
+                }
+
+                const openPorts = [];
+                const lines = stdout1
+                  .split("\n")
+                  .filter((line) => line.trim() !== "");
+                console.log(lines);
+                for (const line of lines) {
+                  let parts = line.split("\t");
+                  if (parts[0].startsWith("Host")) {
+                    for (const value of parts) {
+                      if (value.trim().startsWith("Status")) {
+                        console.log(value.trim());
+                      }
+                      if (value.trim().startsWith("Ports")) {
+                        const arr = value.split(",");
+                        console.log(arr.length);
+                      }
+                    }
+                  }
+                }
+                // lines.forEach((line) => {
+                //   if (parts.length >= 4 && parts[parts.length - 1].includes("open")) {
+                //     console.log(parts);
+                //     const port = {
+                //       portNumber: parts[1].split("/")[0],
+                //       protocol: parts[1].split("/")[1],
+                //       service: parts[2],
+                //     };
+                //     openPorts.push(port);
+                //   }
+                // });
+                console.log(openPorts);
+                // Generating report
+                const report = {
+                  numberOfVulnerablePorts: openPorts.length,
+                  detailedReport: openPorts.map((port) => ({
+                    portNumber: port.portNumber,
+                    protocol: port.protocol,
+                    service: port.service,
+                    recommendedAction: "Recommendation goes here", // Add your recommendation here
+                  })),
+                };
+                indicator.emit("status", "completed");
+                channel.ack(msg);
+              }
+            );
+          });
+        } else {
+          indicator.emit("status", "error");
+          channel.ack(msg);
+        }
+        // Simulate processing time (e.g., 5 seconds)
+      },
+      {
+        noAck: false,
+      }
+    );
+  });
+});
 
 socket.listen(3030, () => {
   console.log(`listening on 3030`);

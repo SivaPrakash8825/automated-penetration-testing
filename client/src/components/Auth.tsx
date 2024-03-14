@@ -35,7 +35,7 @@ const Auth = ({ type }: Props) => {
         password: password,
       });
       console.log(data);
-
+      localStorage.setItem("pentest", JSON.stringify(data));
       if (data) {
         route.push("/home");
       }

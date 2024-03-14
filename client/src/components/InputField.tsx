@@ -10,6 +10,7 @@ const InputField = (props: Props) => {
   const sendUrl = async () => {
     const { data } = await axios.post("http://localhost:3030/scan", {
       url: url,
+      userId: JSON.parse(localStorage.getItem("pentest") as string)["_id"],
     });
     console.log(data);
   };

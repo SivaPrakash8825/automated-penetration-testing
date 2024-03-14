@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoAdd } from "react-icons/io5";
 import { FaFileDownload } from "react-icons/fa";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
+import { io } from "socket.io-client";
+
 type Props = {};
 
 type cardDataType = {
@@ -42,6 +44,19 @@ const UserList = (props: Props) => {
       url: "asdfasdfasdf",
     },
   ]);
+
+  useEffect(() => {
+    const socket = io("http://localhost:3030");
+    if (localStorage.getItem("pentest")) {
+      socket.emit(
+        "join_team",
+        JSON.parse(localStorage.getItem("pentest") as string)["_id"]
+      );
+    }
+    socket.on("status", (val) => {
+      console.log(val);
+    });
+  }, []);
   return (
     <div className="w-[100vw] min-h-[100vh] flex  flex-col gap-y-8  justify-center mb-52 mt-10  items-center">
       {allUrl.map((data, index) => {
