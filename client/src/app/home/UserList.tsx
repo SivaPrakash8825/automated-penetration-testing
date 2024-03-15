@@ -6,9 +6,6 @@ import { FaFileDownload } from "react-icons/fa";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
-import { io } from "socket.io-client";
-
-type Props = {};
 
 type cardDataType = {
   url: string;
@@ -16,47 +13,7 @@ type cardDataType = {
   status: string;
 };
 
-const UserList = (props: Props) => {
-  const [allUrl, setAllUrl] = useState<cardDataType[]>([
-    {
-      date: "asfdadsf",
-      status: "fasdfasdfas",
-      url: "asdfasdfasdf",
-    },
-    {
-      date: "asfdadsf",
-      status: "fasdfasdfas",
-      url: "asdfasdfasdf",
-    },
-    {
-      date: "asfdadsf",
-      status: "fasdfasdfas",
-      url: "asdfasdfasdf",
-    },
-    {
-      date: "asfdadsf",
-      status: "fasdfasdfas",
-      url: "asdfasdfasdf",
-    },
-    {
-      date: "asfdadsf",
-      status: "fasdfasdfas",
-      url: "asdfasdfasdf",
-    },
-  ]);
-
-  useEffect(() => {
-    const socket = io("http://localhost:3030");
-    if (localStorage.getItem("pentest")) {
-      socket.emit(
-        "join_team",
-        JSON.parse(localStorage.getItem("pentest") as string)["_id"]
-      );
-    }
-    socket.on("status", (val) => {
-      console.log(val);
-    });
-  }, []);
+const UserList = ({ allUrl }: { allUrl: cardDataType[] }) => {
   return (
     <div className="w-[100vw] min-h-[100vh] flex  flex-col gap-y-8  justify-center mb-52 mt-10  items-center">
       {allUrl.map((data, index) => {
@@ -67,8 +24,7 @@ const UserList = (props: Props) => {
             {/* {"header"} */}
             <section className=" flex justify-between px-4">
               <p className=" w-3/5 truncate text-sm ">
-                <span className=" font-black">URL : </span>{" "}
-                https://portfolio-sivaprakash8825.vercel.app/
+                <span className=" font-black">URL : </span> {data.url}
               </p>
               <p className=" text-nowrap text-sm">
                 {/* {`${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}(${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()})`} */}
@@ -76,24 +32,24 @@ const UserList = (props: Props) => {
             </section>
             {/* {"status"} */}
             <section className=" w-full h-10  flex justify-center items-center px-10">
-              <div className=" relative w-6 h-6 grid place-content-center text-xs bg-red-700 text-white rounded-lg">
+              <div className=" relative w-6 h-6 grid place-content-center text-xs bg-purple-700 text-white rounded-lg">
                 <FaCheck />
-                <p className="absolute -bottom-4 text-black text-xs left-1/2 -translate-x-[50%] ">
+                <p className="absolute -bottom-4 text-black font-black text-xs left-1/2 -translate-x-[50%] ">
                   schedule
                 </p>
               </div>
-              <div className=" grow h-1 bg-yellow-300"></div>
-              <div className=" w-6 h-6 relative grid place-content-center text-xs bg-yellow-300 text-white rounded-lg">
+              <div className=" grow h-1 bg-purple-300"></div>
+              <div className=" w-6 h-6 relative grid place-content-center text-xs bg-purple-300 text-white rounded-lg">
                 <FaCheck />
-                <p className="absolute -bottom-4 text-black text-xs left-1/2 -translate-x-[50%] text-nowrap ">
+                <p className="absolute -bottom-4 text-black opacity-[0.7] text-xs left-1/2 -translate-x-[50%] text-nowrap ">
                   in-progress
                 </p>
               </div>
 
-              <div className=" grow h-1 bg-green-500"></div>
-              <div className=" w-6 h-6 relative grid place-content-center text-xs bg-green-500 text-white rounded-lg">
+              <div className=" grow h-1 bg-purple-200"></div>
+              <div className=" w-6 h-6 relative grid place-content-center text-xs bg-purple-200 text-white rounded-lg">
                 <FaCheck />
-                <p className="absolute -bottom-4 text-black text-xs left-1/2 -translate-x-[50%] text-nowrap ">
+                <p className="absolute -bottom-4 text-black text-xs left-1/2 opacity-[0.7] -translate-x-[50%] text-nowrap ">
                   Completed
                 </p>
               </div>

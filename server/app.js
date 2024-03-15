@@ -13,6 +13,8 @@ const http = require("http");
 const amqp = require("amqplib/callback_api");
 const https = require("https");
 const urlvalid = require("valid-url");
+const requestmodel = require("./schema/request");
+const { error } = require("console");
 
 let indicator;
 dotenv.config({
@@ -42,14 +44,6 @@ io.on("connection", (server) => {
     console.log(value);
     server.join(value);
   });
-  // server.on("send_mes", (value) => {
-  //   server.to(value.curchat).emit("rec_mes", {
-  //     user: value.sender,
-  //     sendermsg: value.msg,
-  //     roomno: value.curchat,
-  //   });
-  //   console.log(value.sender);
-  // });
 });
 app.use(cookieparser());
 
@@ -198,7 +192,7 @@ amqp.connect("amqp://localhost", function (error0, connection) {
       durable: false,
     });
     channel.prefetch(1);
-    app.post("/scan", (req, res) => {
+    app.post("/scan", AddUserRequest, (req, res) => {
       const { userId, url } = req.body;
 
       channel.sendToQueue(queue, Buffer.from(JSON.stringify({ userId, url })));
@@ -209,94 +203,123 @@ amqp.connect("amqp://localhost", function (error0, connection) {
 
     channel.consume(
       queue,
-      function (msg) {
+      async function (msg) {
         const { userId, url } = JSON.parse(msg.content.toString());
         console.log(` [x] Processing request from user ${userId}:`, url);
         if (urlvalid.isUri(url)) {
-          exec(`nslookup ${url}`, (error, stdout, stderr) => {
-            if (error) {
-              console.error(error);
-              return res.status(500).send("Error performing DNS lookup");
-            }
-
-            if (stderr) {
-              console.error(stderr);
-            }
-
-            const lines = stdout
-              .split("\n")
-              .filter((line) => line.trim() !== "");
-            const ipAddress = extractIPv4Addresses(lines);
-            console.log(ipAddress);
-            exec(
-              `nmap -sV -oG - ${ipAddress[ipAddress.length - 1]}`,
-              (error1, stdout1, stderr1) => {
-                if (error1) {
-                  console.error("Error:", error1);
-                  return res.status(500).send("Error performing port scan");
-                }
-
-                if (stderr1) {
-                  console.error("stderr:", stderr1);
-                }
-
-                const openPorts = [];
-                const lines = stdout1
-                  .split("\n")
-                  .filter((line) => line.trim() !== "");
-                console.log(lines);
-                for (const line of lines) {
-                  let parts = line.split("\t");
-                  if (parts[0].startsWith("Host")) {
-                    for (const value of parts) {
-                      if (value.trim().startsWith("Status")) {
-                        console.log(value.trim());
-                      }
-                      if (value.trim().startsWith("Ports")) {
-                        const arr = value.split(",");
-                        console.log(arr.length);
-                      }
-                    }
-                  }
-                }
-                // lines.forEach((line) => {
-                //   if (parts.length >= 4 && parts[parts.length - 1].includes("open")) {
-                //     console.log(parts);
-                //     const port = {
-                //       portNumber: parts[1].split("/")[0],
-                //       protocol: parts[1].split("/")[1],
-                //       service: parts[2],
-                //     };
-                //     openPorts.push(port);
-                //   }
-                // });
-                console.log(openPorts);
-                // Generating report
-                const report = {
-                  numberOfVulnerablePorts: openPorts.length,
-                  detailedReport: openPorts.map((port) => ({
-                    portNumber: port.portNumber,
-                    protocol: port.protocol,
-                    service: port.service,
-                    recommendedAction: "Recommendation goes here", // Add your recommendation here
-                  })),
-                };
-                indicator.emit("status", "completed");
-                channel.ack(msg);
-              }
-            );
-          });
+          const [result1, result2] = await Promise.all([
+            forNmap(url, channel, msg),
+            forZap(),
+          ]);
         } else {
           indicator.emit("status", "error");
           channel.ack(msg);
         }
-        // Simulate processing time (e.g., 5 seconds)
       },
       {
         noAck: false,
       }
     );
   });
+});
+
+const forZap = async () => {
+  return {
+    value: "das",
+  };
+};
+
+const forNmap = async (url, channel, msg) => {
+  let lines2;
+  await new Promise((resolve, reject) => {
+    exec(`nslookup ${url}`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).send("Error performing DNS lookup");
+      }
+
+      if (stderr) {
+        console.error(stderr);
+      }
+
+      const lines = stdout.split("\n").filter((line) => line.trim() !== "");
+      const ipAddress = extractIPv4Addresses(lines);
+      console.log("adsf" + ipAddress);
+      exec(
+        `nmap -sV -oG - ${ipAddress[ipAddress.length - 1]}`,
+        (error1, stdout1, stderr1) => {
+          if (error1) {
+            console.error("Error:", error1);
+            return res.status(500).send("Error performing port scan");
+          }
+
+          if (stderr1) {
+            console.error("stderr:", stderr1);
+          }
+
+          lines2 = stdout1.split("\n").filter((line) => line.trim() !== "");
+
+          const openPorts = [];
+          for (const line of lines2) {
+            let parts = line.split("\t");
+            if (parts[0].startsWith("Host")) {
+              for (const value of parts) {
+                if (value.trim().startsWith("Status")) {
+                  console.log(value.trim());
+                }
+                if (value.trim().startsWith("Ports")) {
+                  const arr = value.split(",");
+                  console.log(arr.length);
+                }
+              }
+            }
+          }
+
+          // Generating report
+          // const report = {
+          //   numberOfVulnerablePorts: openPorts.length,
+          //   detailedReport: openPorts.map((port) => ({
+          //     portNumber: port.portNumber,
+          //     protocol: port.protocol,
+          //     service: port.service,
+          //     recommendedAction: "Recommendation goes here", // Add your recommendation here
+          //   })),
+          // };
+          indicator.emit("status", "completed");
+          channel.ack(msg);
+          resolve();
+        }
+      );
+    });
+  });
+  return lines2;
+};
+
+const AddUserRequest = async (req, res, next) => {
+  const { userId, url } = req.body;
+  try {
+    const result = await requestmodel.create({
+      userid: userId,
+      url: url,
+      status: "scheduled",
+    });
+    if (result) {
+      next();
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ error: error.message });
+  }
+};
+
+app.post("/getuserrequest", async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const result = await requestmodel.find({ userid: userId });
+    return res.status(200).send(result);
+  } catch (e) {
+    return res.status(400).send(e);
+  }
 });
 
 socket.listen(3030, () => {
