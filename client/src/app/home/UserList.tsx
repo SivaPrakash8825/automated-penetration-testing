@@ -52,7 +52,7 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
                       ? "bg-red-600 scale-x-100"
                       : data.status == "inprogress" ||
                         data.status == "completed"
-                      ? "bg-purple-600 scale-x-100"
+                      ? "bg-purple-600 text-black scale-x-100"
                       : ""
                   } `}></div>
               </div>
@@ -61,14 +61,14 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
                   data.status == "error"
                     ? "bg-red-600"
                     : data.status == "inprogress" || data.status == "completed"
-                    ? "bg-purple-600 delay-1000"
+                    ? "bg-purple-600  delay-1000"
                     : "bg-purple-300"
                 } text-white rounded-lg`}>
                 {data.status == "error" ? <TiWarning /> : <FaCheck />}
                 <p
                   className={`absolute -bottom-4 text-black  ${
-                    data.status == "error" || data.status == "completed"
-                      ? "opacity-1"
+                    data.status == "error" || data.status == "inprogress"
+                      ? "opacity-1 font-black"
                       : "opacity-[0.7] "
                   } text-xs left-1/2 -translate-x-[50%] text-nowrap `}>
                   in-progress
@@ -97,7 +97,7 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
                 <p
                   className={`absolute -bottom-4 text-black ${
                     data.status == "error" || data.status == "completed"
-                      ? "opacity-1"
+                      ? "opacity-1 font-black"
                       : "opacity-[0.7] "
                   } text-xs left-1/2 -translate-x-[50%] text-nowrap `}>
                   {data.status == "error" ? "error " : "completed"}
