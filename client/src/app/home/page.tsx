@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import UserList from "./UserList";
 import axios from "axios";
 import { io } from "socket.io-client";
+import { v4 as uuid } from "uuid";
 
 type Props = {
   onclick: () => void;
@@ -14,6 +15,7 @@ type cardDataType = {
   url: string;
   date: string;
   status: string;
+  urlId: string;
 };
 
 const Homepage = () => {
@@ -21,13 +23,16 @@ const Homepage = () => {
   const [allUrl, setAllUrl] = useState<cardDataType[]>([]);
   const sendUrl = async () => {
     if (url) {
-      const { data } = await axios.post("http://localhost:3030/scan", {
+      const newid = uuid();
+      const { data } = await axios.post("http://localhost:3030/test/scan", {
         url: url,
         userId: JSON.parse(localStorage.getItem("pentest") as string)["_id"],
+        urlId: newid,
       });
-      console.log(data);
-
-      setAllUrl((pre) => [...pre, { date: "", status: "", url: url }]);
+      setAllUrl((pre) => [
+        ...pre,
+        { date: "", status: "scheduled", url: url, urlId: newid },
+      ]);
       setUrl("");
     } else {
       alert("fill the input!!");
@@ -36,7 +41,7 @@ const Homepage = () => {
 
   const getUserRequest = async () => {
     const { data } = await axios.post(
-      "http://localhost:3030/getuserrequest",
+      "http://localhost:3030/store/getuserrequest",
       {
         userId: JSON.parse(localStorage.getItem("pentest") as string)["_id"],
       },
@@ -45,19 +50,30 @@ const Homepage = () => {
     setAllUrl(data);
   };
 
+  const socketfun = () => {
+    const socket = io("http://localhost:3030");
+    socket.emit(
+      "join_team",
+      JSON.parse(localStorage.getItem("pentest") as string)["_id"]
+    );
+    socket.on("status", (val) => {
+      setAllUrl((prevUrls) => {
+        const updatedUrls = prevUrls.map((data) => {
+          if (data.urlId === val.urlId) {
+            return { ...data, status: val.status };
+          } else {
+            return data;
+          }
+        });
+        return updatedUrls;
+      });
+    });
+  };
+
   useEffect(() => {
     getUserRequest();
 
-    const socket = io("http://localhost:3030");
-    if (localStorage.getItem("pentest")) {
-      socket.emit(
-        "join_team",
-        JSON.parse(localStorage.getItem("pentest") as string)["_id"]
-      );
-    }
-    socket.on("status", (val) => {
-      console.log(val);
-    });
+    socketfun();
   }, []);
 
   return (

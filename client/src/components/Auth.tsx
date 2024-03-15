@@ -26,7 +26,7 @@ const Auth = ({ type }: Props) => {
 
   const Register = async () => {
     if (username && password === conPassword && password && email) {
-      await axios.post("http://localhost:3030/register", {
+      await axios.post("http://localhost:3030/auth/register", {
         email: email,
         username: username,
         password: password,
@@ -37,7 +37,7 @@ const Auth = ({ type }: Props) => {
   };
   const Login = async () => {
     if (password && email) {
-      const { data } = await axios.post("http://localhost:3030/login", {
+      const { data } = await axios.post("http://localhost:3030/auth/login", {
         email: email,
         password: password,
       });
