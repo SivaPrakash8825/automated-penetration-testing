@@ -18,6 +18,7 @@ const schema = new mongoose.Schema({
   zap: {
     type: String,
   },
+  
   time: {
     type: String,
   },

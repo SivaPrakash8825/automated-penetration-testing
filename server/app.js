@@ -14,7 +14,17 @@ const amqp = require("amqplib/callback_api");
 const https = require("https");
 const urlvalid = require("valid-url");
 const requestmodel = require("./schema/request");
-const { error } = require("console");
+const ZapClient = require("zaproxy");
+
+const zapOptions = {
+  apiKey: "rki1o56ofug84lcnt9d76gths2",
+  proxy: {
+    host: "127.0.0.1",
+    port: 8080,
+  },
+};
+
+const zaproxy = new ZapClient(zapOptions);
 
 let indicator;
 dotenv.config({
@@ -25,14 +35,14 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3001"],
     credentials: true,
   })
 );
 const socket = http.createServer(app);
 const io = new Server(socket, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3001",
     credentials: true,
   },
 });
@@ -205,14 +215,20 @@ amqp.connect("amqp://localhost", function (error0, connection) {
       queue,
       async function (msg) {
         const { userId, url } = JSON.parse(msg.content.toString());
-        console.log(` [x] Processing request from user ${userId}:`, url);
+        
         if (urlvalid.isUri(url)) {
           const [result1, result2] = await Promise.all([
-            forNmap(url, channel, msg),
-            forZap(),
+            forNmap(url),
+            forZap(url),
           ]);
+          if(result1 && result2){
+            await request.findOneUpdate({url:url},{$set:{status:"completed",nmap:result1,zap:result2}})
+            indicator.emit("status", "complete");
+            channel.ack(msg);
+          }
+          
         } else {
-          indicator.emit("status", "error");
+          
           channel.ack(msg);
         }
       },
@@ -223,13 +239,61 @@ amqp.connect("amqp://localhost", function (error0, connection) {
   });
 });
 
-const forZap = async () => {
-  return {
-    value: "das",
-  };
+const forZap = async (url) => {
+  const vulnerabilitiesByRisk = {};
+  await new Promise(async(resolve, reject) => {
+    try {
+      const response = await zaproxy.spider.scan({
+        url:url,
+      });
+      let spiderStatus,activestatus;
+      do {
+        spiderStatus = await zaproxy.spider.status(response.scan);
+        // console.log();
+      } while (spiderStatus.status !== "100");
+      const activeScanResponse = await zaproxy.ascan.scan({
+        url: url,
+      });
+      do {
+        activestatus = await zaproxy.ascan.status(activeScanResponse.scan);
+        // console.log();
+      } while (activestatus.status !== "100");
+     if(activestatus.status === "100"){
+      const alerts = (await zaproxy.core.alerts({
+        baseurl: url,
+      })).alerts;
+    
+    
+    alerts.forEach(alert => {
+        if (!vulnerabilitiesByRisk[alert.risk]) {
+            vulnerabilitiesByRisk[alert.risk] = 0;
+        }
+        vulnerabilitiesByRisk[alert.risk]++;
+        const detailsToReproduce = alerts.map(alert => ({
+          name:alert.name,
+          riskrate:alert.risk,
+          confidence:alert.confidence,
+          vulsummar:alert.description,
+      solution:alert.solution,
+      reference:alert.reference,
+      }));
+      vulnerabilitiesByRisk["details"] = detailsToReproduce;
+    });
+     }
+      // const jsonResponse = JSON.stringify(response);
+      // fs.writeFile("report.json", jsonResponse, (err) => {
+      //   if (err) throw err;
+      //   console.log("Report saved successfully!");
+      // });
+      resolve()
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  })
+  return vulnerabilitiesByRisk;
 };
 
-const forNmap = async (url, channel, msg) => {
+const forNmap = async (url) => {
   let lines2;
   await new Promise((resolve, reject) => {
     exec(`nslookup ${url}`, (error, stdout, stderr) => {
@@ -245,6 +309,7 @@ const forNmap = async (url, channel, msg) => {
       const lines = stdout.split("\n").filter((line) => line.trim() !== "");
       const ipAddress = extractIPv4Addresses(lines);
       console.log("adsf" + ipAddress);
+
       exec(
         `nmap -sV -oG - ${ipAddress[ipAddress.length - 1]}`,
         (error1, stdout1, stderr1) => {
@@ -285,8 +350,7 @@ const forNmap = async (url, channel, msg) => {
           //     recommendedAction: "Recommendation goes here", // Add your recommendation here
           //   })),
           // };
-          indicator.emit("status", "completed");
-          channel.ack(msg);
+        
           resolve();
         }
       );
@@ -325,3 +389,4 @@ app.post("/getuserrequest", async (req, res) => {
 socket.listen(3030, () => {
   console.log(`listening on 3030`);
 });
+
