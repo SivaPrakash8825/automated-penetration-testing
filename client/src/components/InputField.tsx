@@ -3,17 +3,13 @@ import axios from "axios";
 import React, { useState } from "react";
 import { IoSend } from "react-icons/io5";
 
-type Props = {};
+type Props = {
+  sendUrl: () => void;
+  url: string;
+  setUrl: React.Dispatch<React.SetStateAction<string>>;
+};
 
-const InputField = (props: Props) => {
-  const [url, setUrl] = useState("");
-  const sendUrl = async () => {
-    const { data } = await axios.post("http://localhost:3030/scan", {
-      url: url,
-      userId: JSON.parse(localStorage.getItem("pentest") as string)["_id"],
-    });
-    console.log(data);
-  };
+const InputField = ({ sendUrl, url, setUrl }: Props) => {
   return (
     <div className=" w-[100vw] h-24 fixed bottom-0 ">
       <div className="w-full h-full bg-white py-1 mb-2 flex justify-center items-center ">

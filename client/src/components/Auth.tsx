@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import axios from "axios";
 import AngerTag from "./AngerTag";
@@ -16,6 +16,13 @@ const Auth = ({ type }: Props) => {
   const [password, setPassword] = useState("");
   const [username, setUserName] = useState("");
   const [conPassword, setConPassword] = useState("");
+
+  useEffect(() => {
+    const user = localStorage.getItem("pentest");
+    if (user) {
+      route.push("/home");
+    }
+  }, []);
 
   const Register = async () => {
     if (username && password === conPassword && password && email) {
