@@ -36,3 +36,11 @@ To set up and run the server application:
 3. Run the Server Application in Development Mode:<br>
    npm run dev
    
+# ZAP Server
+**To start the ZAP Server:**
+
+Open the ZAP Server application.
+
+(OR)
+
+Use the following command in the terminal:
