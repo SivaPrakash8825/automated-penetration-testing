@@ -5,3 +5,11 @@ Automated Penetration Testing is a web application designed to streamline the pr
 The application generates comprehensive reports for customers to download, providing detailed insights into potential vulnerabilities discovered during the testing process. By automating these security assessments, Automated Penetration Testing empowers customers to proactively identify and address security weaknesses in their web applications, ultimately enhancing their overall cybersecurity posture.
 
 <img width="416" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/b711dba9-2c7b-4592-ae13-14efd2d389c0">
+
+### Components
+***Automated Penetration Testing comprises the following components:***
+
+Client-Side Application: Provides a user-friendly interface for customers to submit their web application URLs and retrieve reports.
+Server-Side Application: Handles the validation of submitted URLs, initiates automated penetration testing using ZAP and Nmap CLI commands, and generates comprehensive reports.
+ZAP Server: Utilized for automated security scanning and vulnerability detection within the target web applications.
+Nmap Tool: Used for network discovery and security scanning to complement the vulnerability assessment conducted by ZAP.
