@@ -25,9 +25,8 @@ To set up and run the client application, follow these steps:<br>
    npm i
 3. Run the Client Application in Development Mode:<br>
    npm run dev
-<br>
 # Server
 ### Setting Up and Running the Server Application<br>
 To set up and run the server application:
 
-Move to the server folder:
+1. Move to the server folder:
