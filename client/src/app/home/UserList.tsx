@@ -1,18 +1,18 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import { IoAdd } from "react-icons/io5";
 import { FaFileDownload } from "react-icons/fa";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
 import axios from "axios";
 import Generatepdf2 from "@/utils/GenerateReport";
+import { Toaster } from "react-hot-toast";
 
 type cardDataType = {
   url: string;
   date: string;
-  status: string;
+  status: "error" | "testerror" | "completed" | "inprogress" | "scheduled";
   urlId: string;
 };
 
@@ -33,14 +33,29 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
   const genrateReport = async (urlId: string) => {
     const { data } = await axios.get(`http://localhost:3030/store/${urlId}`);
     console.log(data);
+    const nmap: string[][] = JSON.parse(data.nmap);
+    const nmapdata = [];
+    const zapval = [];
+    // 0 index contain the header
+    if (nmap.length > 0) {
+      nmap[0].splice(1, 0, "PROTOCOL");
+      nmap[0].splice(4, 0, "RECOMMENDED ACTION");
+      for (const [index, value] of nmap.entries()) {
+        if (index) {
+          const arr = value[0].split("/");
+          nmap[index] = [...arr, value[1], value[2], "close the port"];
+        }
+      }
+      nmapdata.push(nmap);
+    }
 
-    const zapdata: [string, number | details[]][] = Object.entries(
-      JSON.parse(data.zap)
+    const zapdata: [string, number | details[]][] | string = JSON.parse(
+      data.zap
     );
-
-    console.log(zapdata);
-
-    Generatepdf2(zapdata);
+    if (zapdata != "error") {
+      zapval.push(Object.entries(zapdata));
+    }
+    Generatepdf2(nmapdata, zapval);
   };
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -48,12 +63,13 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
   return (
     <div
       ref={ref}
-      className="w-[100vw] min-h-[100vh] flex  flex-col gap-y-8  justify-center mb-52 mt-10  items-center">
+      className={`w-[100vw] min-h-[100vh] flex  flex-col gap-y-8  justify-center  items-center`}>
+      <Toaster />
       {allUrl.map((data, index) => {
         return (
           <div
             key={index}
-            className=" sm:w-3/4 h-auto md:w-7/12 flex flex-col  gap-y-6 p-3 pt-4  border border-black rounded-md ">
+            className={` sm:w-3/4 h-auto md:w-7/12 flex flex-col  gap-y-6 p-3 pt-4 mb-16 border border-black rounded-md `}>
             {/* {"header"} */}
             <section className=" flex justify-between px-4">
               <p className=" w-3/5 truncate text-sm ">
@@ -68,7 +84,7 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
               <div className=" relative w-6 h-6 grid place-content-center text-xs bg-purple-700 text-white rounded-lg">
                 <FaCheck />
                 <p className="absolute -bottom-4 text-black font-black text-xs left-1/2 -translate-x-[50%] ">
-                  {data.status ? "schedule" : "loading"}
+                  {data.status ? "schedule" : "prepare"}
                 </p>
               </div>
               <div className=" grow h-1 relative bg-purple-300">
@@ -83,7 +99,7 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
                   } `}></div>
               </div>
               <div
-                className={` w-6 h-6 relative grid transition-all place-content-center text-xs  ${
+                className={` w-6 h-6 relative grid place-content-center text-xs  ${
                   data.status == "error"
                     ? "bg-red-600"
                     : data.status == "inprogress" || data.status == "completed"

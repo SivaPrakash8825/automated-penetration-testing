@@ -5,6 +5,8 @@ import UserList from "./UserList";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { v4 as uuid } from "uuid";
+import toast from "react-hot-toast";
+import SideNav from "@/components/SideNav";
 
 type Props = {
   onclick: () => void;
@@ -14,7 +16,7 @@ type Props = {
 type cardDataType = {
   url: string;
   date: string;
-  status: string;
+  status: "error" | "testerror" | "completed" | "inprogress" | "scheduled";
   urlId: string;
 };
 
@@ -35,7 +37,14 @@ const Homepage = () => {
       ]);
       setUrl("");
     } else {
-      alert("fill the input!!");
+      toast.error("Fill the input!!", {
+        duration: 2000,
+        position: "top-center",
+        iconTheme: {
+          primary: "red",
+          secondary: "#fff",
+        },
+      });
     }
   };
 
@@ -57,6 +66,8 @@ const Homepage = () => {
       JSON.parse(localStorage.getItem("pentest") as string)["_id"]
     );
     socket.on("status", (val) => {
+      console.log(val);
+
       setAllUrl((prevUrls) => {
         const updatedUrls = prevUrls.map((data) => {
           if (data.urlId === val.urlId) {
@@ -78,6 +89,7 @@ const Homepage = () => {
 
   return (
     <div className=" overflow-x-hidden">
+      <SideNav />
       <UserList allUrl={allUrl} />
       <InputField sendUrl={sendUrl} url={url} setUrl={setUrl} />
     </div>
