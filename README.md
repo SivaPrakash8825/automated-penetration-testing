@@ -20,21 +20,21 @@ The application generates comprehensive reports for customers to download, provi
 To set up and run the client application, follow these steps:<br>
 
 1. Move to the Client Folder:<br>
-   cd client
+   **cd client**
 2. Install the Dependencies:<br>
-   npm i
+   **npm i**
 3. Run the Client Application in Development Mode:<br>
-   npm run dev
+   **npm run dev**
 # Server
 ### Setting Up and Running the Server Application<br>
 To set up and run the server application:
 
 1. Move to the server folder:<br>
-   cd server
+   **cd server**
 2. Install the Dependencies:<br>
-   npm i
+   **npm i**
 3. Run the Server Application in Development Mode:<br>
-   npm run dev
+   **npm run dev**
    
 # ZAP Server
 #### To start the ZAP Server:
