@@ -1,21 +1,54 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { IoAdd } from "react-icons/io5";
 import { FaFileDownload } from "react-icons/fa";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
+import axios from "axios";
+import Generatepdf2 from "@/utils/GenerateReport";
 
 type cardDataType = {
   url: string;
   date: string;
   status: string;
+  urlId: string;
 };
 
-const UserList = ({ allUrl }: { allUrl: cardDataType[] }) => {
+type details = {
+  name: string;
+  confidence: string;
+  reference: string;
+  riskrate: string;
+
+  solution: string;
+  vulsummar: string;
+};
+
+const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  const genrateReport = async (urlId: string) => {
+    const { data } = await axios.get(`http://localhost:3030/store/${urlId}`);
+    console.log(data);
+
+    const zapdata: [string, number | details[]][] = Object.entries(
+      JSON.parse(data.zap)
+    );
+
+    console.log(zapdata);
+
+    Generatepdf2(zapdata);
+  };
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [allUrl]);
   return (
-    <div className="w-[100vw] min-h-[100vh] flex  flex-col gap-y-8  justify-center mb-52 mt-10  items-center">
+    <div
+      ref={ref}
+      className="w-[100vw] min-h-[100vh] flex  flex-col gap-y-8  justify-center mb-52 mt-10  items-center">
       {allUrl.map((data, index) => {
         return (
           <div
@@ -35,22 +68,67 @@ const UserList = ({ allUrl }: { allUrl: cardDataType[] }) => {
               <div className=" relative w-6 h-6 grid place-content-center text-xs bg-purple-700 text-white rounded-lg">
                 <FaCheck />
                 <p className="absolute -bottom-4 text-black font-black text-xs left-1/2 -translate-x-[50%] ">
-                  schedule
+                  {data.status ? "schedule" : "loading"}
                 </p>
               </div>
-              <div className=" grow h-1 bg-purple-300"></div>
-              <div className=" w-6 h-6 relative grid place-content-center text-xs bg-purple-300 text-white rounded-lg">
-                <FaCheck />
-                <p className="absolute -bottom-4 text-black opacity-[0.7] text-xs left-1/2 -translate-x-[50%] text-nowrap ">
+              <div className=" grow h-1 relative bg-purple-300">
+                <div
+                  className={` absolute w-full origin-left  transition-all scale-x-0 h-full ${
+                    data.status == "error"
+                      ? "bg-red-600 scale-x-100"
+                      : data.status == "inprogress" ||
+                        data.status == "completed"
+                      ? "bg-purple-600 text-black scale-x-100"
+                      : ""
+                  } `}></div>
+              </div>
+              <div
+                className={` w-6 h-6 relative grid transition-all place-content-center text-xs  ${
+                  data.status == "error"
+                    ? "bg-red-600"
+                    : data.status == "inprogress" || data.status == "completed"
+                    ? "bg-purple-600  delay-1000"
+                    : "bg-purple-300"
+                } text-white rounded-lg`}>
+                {data.status == "error" ? <TiWarning /> : <FaCheck />}
+                <p
+                  className={`absolute -bottom-4 text-black  ${
+                    data.status == "error" ||
+                    data.status == "completed" ||
+                    data.status == "inprogress"
+                      ? "opacity-1 font-black"
+                      : "opacity-[0.7] "
+                  } text-xs left-1/2 -translate-x-[50%] text-nowrap `}>
                   in-progress
                 </p>
               </div>
 
-              <div className=" grow h-1 bg-purple-200"></div>
-              <div className=" w-6 h-6 relative grid place-content-center text-xs bg-purple-200 text-white rounded-lg">
-                <FaCheck />
-                <p className="absolute -bottom-4 text-black text-xs left-1/2 opacity-[0.7] -translate-x-[50%] text-nowrap ">
-                  Completed
+              <div className={` grow h-1 relative bg-purple-300`}>
+                <div
+                  className={` absolute scale-x-0 origin-left  w-full h-full ${
+                    data.status == "error"
+                      ? "bg-red-600 scale-x-100"
+                      : data.status == "completed"
+                      ? "bg-purple-600 scale-x-100"
+                      : ""
+                  } `}></div>
+              </div>
+              <div
+                className={` w-6 h-6 relative grid place-content-center  ${
+                  data.status == "error"
+                    ? "bg-red-600"
+                    : data.status == "completed"
+                    ? "bg-purple-600"
+                    : "bg-purple-300"
+                } text-xs  text-white rounded-lg`}>
+                {data.status == "error" ? <TiWarning /> : <FaCheck />}
+                <p
+                  className={`absolute -bottom-4 text-black ${
+                    data.status == "error" || data.status == "completed"
+                      ? "opacity-1 font-black"
+                      : "opacity-[0.7] "
+                  } text-xs left-1/2 -translate-x-[50%] text-nowrap `}>
+                  {data.status == "error" ? "error " : "completed"}
                 </p>
               </div>
             </section>
@@ -60,20 +138,28 @@ const UserList = ({ allUrl }: { allUrl: cardDataType[] }) => {
                 more
                 <IoIosArrowDropdown className=" text-xl" />
               </div>
-              <div className=" flex items-center text-white cursor-pointer">
-                <div className="p-2 bg-gray-600 rounded-full">
+              <div
+                onClick={() => genrateReport(data.urlId)}
+                className={` flex items-center text-white cursor-pointer ${
+                  data.status == "completed"
+                    ? ""
+                    : "pointer-events-none opacity-[0.4]"
+                }`}>
+                <div className="p-2 bg-purple-600 rounded-full">
                   <FaFileDownload className=" text-md" />
                 </div>
-                <div className=" py-1 -z-20 -translate-x-2  rounded-md bg-gray-700 px-5">
-                  <p className=" text-xs">download</p>
+                <div
+                  className={` py-1 -z-20 -translate-x-2   rounded-md bg-gray-700 px-5`}>
+                  <p className=" text-xs capitalize">download</p>
                 </div>
               </div>
             </section>
           </div>
         );
       })}
+      <div ref={bottomRef}></div>
     </div>
   );
-};
+});
 
 export default UserList;
