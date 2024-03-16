@@ -68,5 +68,5 @@ Open the ***RabbitMQ Server application.*** It should ***automatically start the
 **Customization Options:** Provide customization options for customers to tailor the testing process to their specific requirements.<br><br>
 **Automated Remediation:** Investigate the possibility of integrating automated remediation mechanisms to address identified vulnerabilities automatically.
 
-# **Clone this repository:**<br><br>
+# **Clone this repository:**
 https://github.com/SivaPrakash8825/automated-penetration-testing.git
