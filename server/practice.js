@@ -1,22 +1,30 @@
-const validUrl = require("valid-url");
+const { exec } = require("child_process");
 
-// Function to check if a URL is valid
-function checkUrl(url) {
-  if (validUrl.isUri(url)) {
-    console.log(`${url} is a valid URL.`);
-  } else {
-    console.log(`${url} is not a valid URL.`);
+exec(`nslookup ${url}`, (error, stdout, stderr) => {
+  if (error) {
+    console.error(error);
+    return res.status(500).send("Error performing DNS lookup");
   }
-}
 
-// Test cases
-const urls = [
-  "https://www.example.com",
-  "ftp://ftp.example.com",
-  "invalid-url",
-  "http://localhost:3000",
-];
+  if (stderr) {
+    console.error(stderr);
+  }
 
-urls.forEach((url) => {
-  checkUrl(url);
+  const lines = stdout.split("\n").filter((line) => line.trim() !== "");
+  const ipAddress = extractIPv4Addresses(lines);
+  console.log("adsf" + ipAddress);
+  exec(
+    `nmap  ${ipAddress[ipAddress.length - 1]}`,
+    (error1, stdout1, stderr1) => {
+      if (error1) {
+        console.error("Error:", error1);
+        return res.status(500).send("Error performing port scan");
+      }
+      if (stderr1) {
+        console.error("stderr:", stderr1);
+      }
+      const lines2 = stdout1.split("\n").filter((line) => line.trim() !== "");
+      console.log(lines2);
+    }
+  );
 });

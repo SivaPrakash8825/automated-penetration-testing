@@ -6,16 +6,42 @@ import { FaFileDownload } from "react-icons/fa";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
+import axios from "axios";
+import Generatepdf2 from "@/utils/GenerateReport";
 
 type cardDataType = {
   url: string;
   date: string;
   status: string;
+  urlId: string;
+};
+
+type details = {
+  name: string;
+  confidence: string;
+  reference: string;
+  riskrate: string;
+
+  solution: string;
+  vulsummar: string;
 };
 
 const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  const genrateReport = async (urlId: string) => {
+    const { data } = await axios.get(`http://localhost:3030/store/${urlId}`);
+    console.log(data);
+
+    const zapdata: [string, number | details[]][] = Object.entries(
+      JSON.parse(data.zap)
+    );
+
+    console.log(zapdata);
+
+    Generatepdf2(zapdata);
+  };
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [allUrl]);
@@ -67,7 +93,9 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
                 {data.status == "error" ? <TiWarning /> : <FaCheck />}
                 <p
                   className={`absolute -bottom-4 text-black  ${
-                    data.status == "error" || data.status == "inprogress"
+                    data.status == "error" ||
+                    data.status == "completed" ||
+                    data.status == "inprogress"
                       ? "opacity-1 font-black"
                       : "opacity-[0.7] "
                   } text-xs left-1/2 -translate-x-[50%] text-nowrap `}>
@@ -110,12 +138,19 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
                 more
                 <IoIosArrowDropdown className=" text-xl" />
               </div>
-              <div className=" flex items-center text-white cursor-pointer">
-                <div className="p-2 bg-gray-600 rounded-full">
+              <div
+                onClick={() => genrateReport(data.urlId)}
+                className={` flex items-center text-white cursor-pointer ${
+                  data.status == "completed"
+                    ? ""
+                    : "pointer-events-none opacity-[0.4]"
+                }`}>
+                <div className="p-2 bg-purple-600 rounded-full">
                   <FaFileDownload className=" text-md" />
                 </div>
-                <div className=" py-1 -z-20 -translate-x-2  rounded-md bg-gray-700 px-5">
-                  <p className=" text-xs">download</p>
+                <div
+                  className={` py-1 -z-20 -translate-x-2   rounded-md bg-gray-700 px-5`}>
+                  <p className=" text-xs capitalize">download</p>
                 </div>
               </div>
             </section>
