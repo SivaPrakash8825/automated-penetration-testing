@@ -63,7 +63,10 @@ Open the ***RabbitMQ Server application.*** It should ***automatically start the
 **Actionable Insights:** Empowers customers with actionable insights to improve the security posture of their web applications.<br><br>
 **Enhanced Security:** Enables proactive identification and remediation of security vulnerabilities, reducing the risk of exploitation and data breaches.<br><br>
 
-
+# Future Enhancements<br>
+**Integration with Additional Tools:** Explore integration with other security tools and frameworks to enhance the scope and depth of penetration testing.<br>
+**Customization Options:** Provide customization options for customers to tailor the testing process to their specific requirements.<br>
+**Automated Remediation:** Investigate the possibility of integrating automated remediation mechanisms to address identified vulnerabilities automatically.
 
 **Clone this repository:**<br><br>
 https://github.com/SivaPrakash8825/automated-penetration-testing.git
