@@ -29,4 +29,10 @@ To set up and run the client application, follow these steps:<br>
 ### Setting Up and Running the Server Application<br>
 To set up and run the server application:
 
-1. Move to the server folder:
+1. Move to the server folder:<br>
+   cd server
+2. Install the Dependencies:<br>
+   npm i
+3. Run the Server Application in Development Mode:<br>
+   npm run dev
+   
