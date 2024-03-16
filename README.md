@@ -52,8 +52,8 @@ Zap.bat
 Open the ***RabbitMQ Server application.*** It should ***automatically start the server.***
 
 # Features
-**Automated Vulnerability Scanning:** Utilizes advanced scanning techniques to identify potential vulnerabilities across target systems.<br>
-**Exploitation Framework Integration:** Integrates with popular exploitation frameworks to automatically exploit discovered vulnerabilities.<br>
-**Reporting and Documentation:** Generates detailed reports and documentation of penetration testing results, including identified vulnerabilities, exploited systems, and recommended remediation steps.<br>
-**Customization and Extensibility:** Offers flexibility for users to customize and extend the toolset according to specific requirements and preferences.<br>
-**Scheduled Scans:** Allows users to schedule automated penetration tests at regular intervals to continuously monitor and assess the security posture of target environments.<br>
+**Automated Vulnerability Scanning:** Utilizes advanced scanning techniques to identify potential vulnerabilities across target systems.<br><br>
+**Exploitation Framework Integration:** Integrates with popular exploitation frameworks to automatically exploit discovered vulnerabilities.<br><br>
+**Reporting and Documentation:** Generates detailed reports and documentation of penetration testing results, including identified vulnerabilities, exploited systems, and recommended remediation steps.<br><br>
+**Customization and Extensibility:** Offers flexibility for users to customize and extend the toolset according to specific requirements and preferences.<br><br>
+**Scheduled Scans:** Allows users to schedule automated penetration tests at regular intervals to continuously monitor and assess the security posture of target environments.<br><br>
