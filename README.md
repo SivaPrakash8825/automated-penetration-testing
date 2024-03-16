@@ -39,8 +39,10 @@ To set up and run the server application:
 # ZAP Server
 **To start the ZAP Server:**
 
-Open the ZAP Server application.
+Open the ZAP Server application and it will automatically start.
 
 (OR)
 
-Use the following command in the terminal:
+Use the following command in the terminal:<br>
+-> Zap.bat
+
