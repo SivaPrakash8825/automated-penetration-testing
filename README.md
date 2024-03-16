@@ -51,7 +51,13 @@ Zap.bat
 # RabbitMQ Server
 #### To start the RabbitMQ Server:
 
-Open the ***RabbitMQ Server application.*** It should ***automatically start the server.***
+Open the ***RabbitMQ Server application.*** It should ***automatically start the server.***<br><br>
+
+# Methodology<br>
+
+
+![Bone White Black Simple Move Forward Desktop Wallpaper](https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/ec5cde82-483b-4526-a571-faaee4d9b488)
+
 
 # Features<br>
 **Automated Vulnerability Scanning:** Utilizes advanced scanning techniques to identify potential vulnerabilities across target systems.<br><br>
