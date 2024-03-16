@@ -25,8 +25,9 @@ To set up and run the client application, follow these steps:<br>
    npm i
 3. Run the Client Application in Development Mode:<br>
    npm run dev
-Run the Client Application in Development Mode:
+<br>
+# Server
+### Setting Up and Running the Server Application<br>
+To set up and run the server application:
 
-arduino
-Copy code
-npm run dev
+Move to the server folder:
