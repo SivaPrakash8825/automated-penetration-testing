@@ -68,7 +68,11 @@ Open the ***RabbitMQ Server application.*** It should ***automatically start the
 # Future Enhancements<br>
 **Integration with Additional Tools:** Explore integration with other security tools and frameworks to enhance the scope and depth of penetration testing.<br><br>
 **Customization Options:** Provide customization options for customers to tailor the testing process to their specific requirements.<br><br>
-**Automated Remediation:** Investigate the possibility of integrating automated remediation mechanisms to address identified vulnerabilities automatically.
+**Automated Remediation:** Investigate the possibility of integrating automated remediation mechanisms to address identified vulnerabilities automatically.<br><br>
+
+# OUTPUT
+
+
 
 # **Clone this repository:**
 https://github.com/SivaPrakash8825/automated-penetration-testing.git
