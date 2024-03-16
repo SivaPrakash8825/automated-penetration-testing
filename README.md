@@ -6,7 +6,7 @@ The application generates comprehensive reports for customers to download, provi
 
 <img width="416" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/b711dba9-2c7b-4592-ae13-14efd2d389c0">
 
-### Components
+# Components
 **Automated Penetration Testing comprises the following components:**
 
 **Client-Side Application:** Provides a user-friendly interface for customers to submit their web application URLs and retrieve reports.<br>
