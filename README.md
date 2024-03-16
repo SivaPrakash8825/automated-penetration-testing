@@ -39,7 +39,7 @@ To set up and run the server application:
 # ZAP Server
 #### To start the ZAP Server:
 
-Open the **ZAP Server application** and click **START**.
+Open the ***ZAP Server application*** and click ***START***.
 
 (OR)
 
