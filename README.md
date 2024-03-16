@@ -19,10 +19,10 @@ The application generates comprehensive reports for customers to download, provi
 
 To set up and run the client application, follow these steps:<br>
 
-1. Move to the Client Folder:
+1. Move to the Client Folder:<br>
    cd client
-2. Install the Dependencies:
+2. Install the Dependencies:<br>
    npm i
-3. Run the Client Application in Development Mode:
+3. Run the Client Application in Development Mode:<br>
    npm run dev
 
