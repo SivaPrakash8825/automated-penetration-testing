@@ -6,10 +6,9 @@ const dotenv = require("dotenv");
 const http = require("http");
 const { Server } = require("socket.io");
 const { initializeSocket, router } = require("./router/pentest.js");
-
-dotenv.config({
-  path: "./.env",
-});
+const { checkConnection } = require("./db/db.js");
+dotenv.config();
+checkConnection();
 
 app.use(express.json());
 

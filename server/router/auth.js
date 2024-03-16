@@ -2,9 +2,6 @@ const express = require("express");
 const register = require("../schema/register");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
-const { checkConnection } = require("../db/db");
-
-checkConnection();
 
 router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
