@@ -37,12 +37,16 @@ To set up and run the server application:
    npm run dev
    
 # ZAP Server
-**To start the ZAP Server:**
+#### To start the ZAP Server:
 
-Open the **ZAP Server application** and it will automatically start.
+Open the **ZAP Server application** and click **START**.
 
 (OR)
 
-Use the following command in the terminal:<br>
+Use the following command in the terminal:<br><br>
 Zap.bat
 
+# RabbitMQ Server
+#### To start the RabbitMQ Server:
+
+Open the RabbitMQ Server application. It should automatically start the server.
