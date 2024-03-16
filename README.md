@@ -6,7 +6,7 @@ The application generates comprehensive reports for customers to download, provi
 
 # Components
 
-<img width="416" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/b711dba9-2c7b-4592-ae13-14efd2d389c0">
+<img width="416" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/b711dba9-2c7b-4592-ae13-14efd2d389c0"><br><br>
 
 
 **Automated Penetration Testing comprises the following components:**
