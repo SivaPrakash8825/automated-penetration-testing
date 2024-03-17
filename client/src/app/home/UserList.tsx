@@ -6,6 +6,7 @@ import { IoIosArrowDropdown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
 import axios from "axios";
+import { SiVerizon } from "react-icons/si";
 import Generatepdf2 from "@/utils/GenerateReport";
 import { Toaster } from "react-hot-toast";
 
@@ -14,6 +15,8 @@ type cardDataType = {
   date: string;
   status: "error" | "testerror" | "completed" | "inprogress" | "scheduled";
   urlId: string;
+  zapstatus: boolean;
+  nmapstatus: boolean;
 };
 
 type details = {
@@ -27,6 +30,8 @@ type details = {
 };
 
 const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
+  console.log(allUrl);
+
   const ref = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -69,7 +74,9 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
         return (
           <div
             key={index}
-            className={` sm:w-3/4 h-auto md:w-7/12 flex flex-col  gap-y-6 p-3 pt-4 mb-16 border border-black rounded-md `}>
+            className={` sm:w-3/4 h-auto md:w-7/12 flex flex-col ${
+              allUrl.length - 1 == index ? "mb-24 " : ""
+            } gap-y-6 p-3 pt-4 border border-black rounded-md `}>
             {/* {"header"} */}
             <section className=" flex justify-between px-4">
               <p className=" w-3/5 truncate text-sm ">
@@ -91,7 +98,7 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
                 <div
                   className={` absolute w-full origin-left  transition-all scale-x-0 h-full ${
                     data.status == "error"
-                      ? "bg-red-600 scale-x-100"
+                      ? "bg-purple-600 scale-x-100"
                       : data.status == "inprogress" ||
                         data.status == "completed"
                       ? "bg-purple-600 text-black scale-x-100"
@@ -149,10 +156,36 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
               </div>
             </section>
             {/* {"download"} */}
-            <section className=" flex justify-between items-center px-10">
-              <div className=" flex items-center gap-x-1 text-xs cursor-pointer">
-                more
-                <IoIosArrowDropdown className=" text-xl" />
+            <section className=" flex justify-between mt-2 items-center px-10">
+              <div className=" flex  flex-col gap-x-1 text-md cursor-pointer">
+                <h1 className={` flex gap-x-3 items-center`}>
+                  Nmap status{" "}
+                  <span>
+                    {data.status == "completed" || data.status == "error" ? (
+                      data.nmapstatus ? (
+                        <SiVerizon className=" text-green-700" />
+                      ) : (
+                        <TiWarning className=" text-red-600" />
+                      )
+                    ) : (
+                      <SiVerizon className="opacity-[0.3] text-green-700" />
+                    )}
+                  </span>
+                </h1>
+                <h1 className=" flex items-center gap-x-3">
+                  Zap status{" "}
+                  <span>
+                    {data.status == "completed" || data.status == "error" ? (
+                      data.zapstatus ? (
+                        <SiVerizon className=" text-green-700" />
+                      ) : (
+                        <TiWarning className=" text-red-600" />
+                      )
+                    ) : (
+                      <SiVerizon className="opacity-[0.3] text-green-700" />
+                    )}
+                  </span>
+                </h1>
               </div>
               <div
                 onClick={() => genrateReport(data.urlId)}

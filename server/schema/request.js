@@ -22,6 +22,14 @@ const schema = new mongoose.Schema({
   zap: {
     type: String,
   },
+  nmapstatus: {
+    type: Boolean,
+    default: false,
+  },
+  zapstatus: {
+    type: Boolean,
+    default: false,
+  },
   time: {
     type: String,
   },

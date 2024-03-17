@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoSend } from "react-icons/io5";
 
 type Props = {
@@ -10,8 +10,21 @@ type Props = {
 };
 
 const InputField = ({ sendUrl, url, setUrl }: Props) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      sendUrl();
+    }
+  };
+  useEffect(() => {
+    ref.current?.addEventListener("keypress", handleKeyPress);
+
+    return () => {
+      ref.current?.removeEventListener("keypress", handleKeyPress);
+    };
+  }, [url]);
   return (
-    <div className=" w-[100vw] h-24 fixed bottom-0 ">
+    <div ref={ref} className=" w-[100vw] h-24 fixed bottom-0 ">
       <div className="w-full h-full bg-white py-1 mb-2 flex justify-center items-center ">
         <div className="sm:w-11/12 md:w-1/2 border flex gap-x-2 justify-center items-center border-black px-4  rounded-2xl ">
           <input

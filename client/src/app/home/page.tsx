@@ -18,6 +18,8 @@ type cardDataType = {
   date: string;
   status: "error" | "testerror" | "completed" | "inprogress" | "scheduled";
   urlId: string;
+  nmapstatus: boolean;
+  zapstatus: boolean;
 };
 
 const Homepage = () => {
@@ -33,7 +35,14 @@ const Homepage = () => {
       });
       setAllUrl((pre) => [
         ...pre,
-        { date: "", status: "scheduled", url: url, urlId: newid },
+        {
+          date: "",
+          status: "scheduled",
+          url: url,
+          urlId: newid,
+          nmapstatus: false,
+          zapstatus: false,
+        },
       ]);
       setUrl("");
     } else {
@@ -66,12 +75,15 @@ const Homepage = () => {
       JSON.parse(localStorage.getItem("pentest") as string)["_id"]
     );
     socket.on("status", (val) => {
-      console.log(val);
-
       setAllUrl((prevUrls) => {
         const updatedUrls = prevUrls.map((data) => {
           if (data.urlId === val.urlId) {
-            return { ...data, status: val.status };
+            return {
+              ...data,
+              status: val.status,
+              nmapstatus: val.nmapstatus == undefined ? false : val.nmapstatus,
+              zapstatus: val.zapstatus == undefined ? false : val.zapstatus,
+            };
           } else {
             return data;
           }
