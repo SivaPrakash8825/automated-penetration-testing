@@ -42,7 +42,7 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
     const nmapdata = [];
     const zapval = [];
     // 0 index contain the header
-    if (nmap.length > 0) {
+    if (nmap != "error") {
       nmap[0].splice(1, 0, "PROTOCOL");
       nmap[0].splice(4, 0, "RECOMMENDED ACTION");
       for (const [index, value] of nmap.entries()) {

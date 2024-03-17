@@ -18,9 +18,10 @@ const Generatepdf2 = (
     const pdf = new jsPDF("landscape");
     pdf.setFontSize(20);
     pdf.text("NMAP REPORT : ", 10, 17);
-    if (nmapdata[0].length > 0) {
-      console.log(nmapdata[0]);
+    console.log(nmapdata);
+    console.log(zapdata);
 
+    if (nmapdata.length > 0) {
       let text = ` Number of Vulnerable Ports Open: ${nmapdata[0].length - 1}`;
       pdf.setFontSize(15);
       pdf.text("Summary : ", 10, 27);
@@ -54,7 +55,7 @@ const Generatepdf2 = (
       autoTable(pdf, tableProps);
     } else {
       pdf.setFontSize(20);
-      pdf.text("Error in nmap scanning!!", 20, 57, { align: "center" });
+      pdf.text("Error in nmap scanning!!", 20, 37);
     }
     pdf.addPage();
     pdf.setFontSize(20);
