@@ -4,9 +4,9 @@ Automated Penetration Testing is a web application designed to streamline the pr
 
 The application generates comprehensive reports for customers to download, providing detailed insights into potential vulnerabilities discovered during the testing process. By automating these security assessments, Automated Penetration Testing empowers customers to proactively identify and address security weaknesses in their web applications, ultimately enhancing their overall cybersecurity posture.
 
-# Components<br>
+# Components
 
-<img width="416" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/b711dba9-2c7b-4592-ae13-14efd2d389c0"><br><br>
+<br><img width="416" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/b711dba9-2c7b-4592-ae13-14efd2d389c0"><br><br>
 
 
 **Automated Penetration Testing comprises the following components:**
