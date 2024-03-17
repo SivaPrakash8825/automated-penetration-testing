@@ -11,6 +11,7 @@ The application generates comprehensive reports for customers to download, provi
 
 **Automated Penetration Testing comprises the following components:**
 
+
 <br>**Client-Side Application:** Provides a user-friendly interface for customers to submit their web application URLs and retrieve reports.<br><br>
 **Server-Side Application:** Handles the validation of submitted URLs, initiates automated penetration testing using ZAP and Nmap CLI commands, and generates comprehensive reports.<br><br>
 **ZAP Server:** Utilized for automated security scanning and vulnerability detection within the target web applications.<br><br>
@@ -43,10 +44,10 @@ To set up and run the server application:
 
 Open the ***ZAP Server application*** and click ***START***.
 
-(OR)
+**(OR)**
 
 Use the following command in the terminal:<br><br>
-Zap.bat
+**Zap.bat**
 
 # RabbitMQ Server
 #### To start the RabbitMQ Server:
@@ -54,7 +55,6 @@ Zap.bat
 Open the ***RabbitMQ Server application.*** It should ***automatically start the server.***<br><br>
 
 # Methodology<br>
-
 
 ![Bone White Black Simple Move Forward Desktop Wallpaper](https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/ec5cde82-483b-4526-a571-faaee4d9b488)
 
@@ -64,7 +64,7 @@ Open the ***RabbitMQ Server application.*** It should ***automatically start the
 **Exploitation Framework Integration:** Integrates with popular exploitation frameworks to automatically exploit discovered vulnerabilities.<br><br>
 **Reporting and Documentation:** Generates detailed reports and documentation of penetration testing results, including identified vulnerabilities, exploited systems, and recommended remediation steps.<br><br>
 **Customization and Extensibility:** Offers flexibility for users to customize and extend the toolset according to specific requirements and preferences.<br><br>
-**Scheduled Scans:** Allows users to schedule automated penetration tests at regular intervals to continuously monitor and assess the security posture of target environments.<br><br>
+**Scheduled Scans:** Allows users to schedule automated penetration tests at regular intervals to continuously monitor and assess the security posture of target environments.<br>
 # Benefits<br>
 **Efficiency:** Streamlines the penetration testing process, saving time and resources for customers.<br><br>
 **Accuracy:** Utilizes advanced security scanning tools to conduct thorough assessments and identify vulnerabilities accurately.<br><br>
