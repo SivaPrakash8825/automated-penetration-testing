@@ -18,9 +18,10 @@ const Generatepdf2 = (
     const pdf = new jsPDF("landscape");
     pdf.setFontSize(20);
     pdf.text("NMAP REPORT : ", 10, 17);
-    if (nmapdata[0].length > 0) {
-      console.log(nmapdata[0]);
+    console.log(nmapdata);
+    console.log(zapdata);
 
+    if (nmapdata.length > 0) {
       let text = ` Number of Vulnerable Ports Open: ${nmapdata[0].length - 1}`;
       pdf.setFontSize(15);
       pdf.text("Summary : ", 10, 27);
@@ -54,27 +55,31 @@ const Generatepdf2 = (
       autoTable(pdf, tableProps);
     } else {
       pdf.setFontSize(20);
-      pdf.text("Error in nmap scanning!!", 20, 57, { align: "center" });
+      pdf.text("Error in nmap scanning!!", 20, 37);
     }
+    pdf.addPage();
     pdf.setFontSize(20);
-    pdf.text("ZAP REPORT : ", 14, pdf.lastAutoTable.finalY + 20);
+    pdf.text("ZAP REPORT : ", 14, 20);
+    console.log(zapdata);
+
     if (zapdata.length == 0) {
       const startY = pdf.lastAutoTable.finalY + 30;
-      pdf.text("Error in zap scanning!!", 20, startY);
+      pdf.text("Error in zap scanning!!", 20, 30);
     } else {
       const header = ["Type", "Value"];
-      const val: [[string, string[]]] = zapdata.filter(
+      const val: [[string, string[]]] = zapdata[0].filter(
         ([key, value]) => key == "details"
       );
       let text = `Total Number of vulnerability identified : ${val[0][1].length}`;
       pdf.setFontSize(20);
-      pdf.text("summary", 20, 57, { align: "center" });
+      pdf.text("summary", 20, 37);
       pdf.setFontSize(13);
-      pdf.text(text, 30, 57, { align: "center" });
+      pdf.text(text, 30, 47);
+
       const createTable = () => {
-        const startY = pdf.lastAutoTable.finalY + 20;
+        const startY = 57;
         const header = ["Level", "Rate"];
-        const riskgroup: [string, number][] = zapdata.filter(
+        const riskgroup: [string, number][] = zapdata[0].filter(
           ([key, value]) => key != "details"
         );
 
@@ -111,7 +116,8 @@ const Generatepdf2 = (
       createTable();
 
       //   const estimatedFirstTableHeight = (rows.length + 1) * 10; // Assuming each row height is 10
-
+      pdf.setFontSize(20);
+      pdf.text("Details", 20, pdf.lastAutoTable.finalY + 15);
       val[0][1].map((data) => {
         const startYFirstTable = pdf.lastAutoTable.finalY + 20;
         const row = Object.entries(data);
