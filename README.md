@@ -76,10 +76,12 @@ Open the ***RabbitMQ Server application.*** It should ***automatically start the
 **Customization Options:** Provide customization options for customers to tailor the testing process to their specific requirements.<br><br>
 **Automated Remediation:** Investigate the possibility of integrating automated remediation mechanisms to address identified vulnerabilities automatically.<br><br>
 
-# OUTPUT
-<img width="960" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/97048551-2bdf-40a1-8d4d-8d53142e35e5">
+# OUTPUT<br>
+**ZAP is Running**<br>
+<img width="960" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/97048551-2bdf-40a1-8d4d-8d53142e35e5"><br>
 
-
+**Home Page**<br> 
+<img width="960" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/af7b21a2-a57f-4935-9610-1b451fa3c854"><br>
 
 # **Clone this repository:**
 https://github.com/SivaPrakash8825/automated-penetration-testing.git
