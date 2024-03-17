@@ -77,6 +77,7 @@ Open the ***RabbitMQ Server application.*** It should ***automatically start the
 **Automated Remediation:** Investigate the possibility of integrating automated remediation mechanisms to address identified vulnerabilities automatically.<br><br>
 
 # OUTPUT
+<img width="960" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/97048551-2bdf-40a1-8d4d-8d53142e35e5">
 
 
 
