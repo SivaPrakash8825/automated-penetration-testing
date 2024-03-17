@@ -56,7 +56,9 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
             ...arr,
             value[1],
             value[2],
-            recommend[0].recommendation,
+            recommend.length > 0
+              ? recommend[0].recommendation
+              : "Disable always",
           ];
         }
       }

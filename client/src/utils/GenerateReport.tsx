@@ -63,13 +63,11 @@ const Generatepdf2 = (
     console.log(zapdata);
 
     if (zapdata.length == 0) {
-      const startY = pdf.lastAutoTable.finalY + 30;
+      const startY = pdf?.lastAutoTable?.finalY + 30;
       pdf.text("Error in zap scanning!!", 20, 30);
     } else {
       const header = ["Type", "Value"];
-      const val: [[string, string[]]] = zapdata[0].filter(
-        ([key, value]) => key == "details"
-      );
+      const val: any = zapdata[0].filter(([key, value]) => key == "details");
       let text = `Total Number of vulnerability identified : ${val[0][1].length}`;
       pdf.setFontSize(20);
       pdf.text("summary", 20, 37);
@@ -79,7 +77,7 @@ const Generatepdf2 = (
       const createTable = () => {
         const startY = 57;
         const header = ["Level", "Rate"];
-        const riskgroup: [string, number][] = zapdata[0].filter(
+        const riskgroup: any = zapdata[0].filter(
           ([key, value]) => key != "details"
         );
 
