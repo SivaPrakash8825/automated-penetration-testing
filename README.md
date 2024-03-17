@@ -17,7 +17,6 @@ The application generates comprehensive reports for customers to download, provi
 **Nmap Tool:** Used for network discovery and security scanning to complement the vulnerability assessment conducted by ZAP.
 
 # Client Overview
-<br>
 ### Setting Up and Running the Client Application<br>
 
 To set up and run the client application, follow these steps:<br>
