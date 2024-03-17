@@ -27,24 +27,38 @@ const Homepage = () => {
   const [allUrl, setAllUrl] = useState<cardDataType[]>([]);
   const sendUrl = async () => {
     if (url) {
-      const newid = uuid();
-      const { data } = await axios.post("http://localhost:3030/test/scan", {
-        url: url,
-        userId: JSON.parse(localStorage.getItem("pentest") as string)["_id"],
-        urlId: newid,
-      });
-      setAllUrl((pre) => [
-        ...pre,
-        {
-          date: "",
-          status: "scheduled",
-          url: url,
+      if (
+        url.trim().startsWith("http://") ||
+        url.trim().startsWith("https://")
+      ) {
+        const newid = uuid();
+        const { data } = await axios.post("http://localhost:3030/test/scan", {
+          url: url.trim(),
+          userId: JSON.parse(localStorage.getItem("pentest") as string)["_id"],
           urlId: newid,
-          nmapstatus: false,
-          zapstatus: false,
-        },
-      ]);
-      setUrl("");
+        });
+        setAllUrl((pre) => [
+          ...pre,
+          {
+            date: "",
+            status: "scheduled",
+            url: url,
+            urlId: newid,
+            nmapstatus: false,
+            zapstatus: false,
+          },
+        ]);
+        setUrl("");
+      } else {
+        toast.error("Invalid url", {
+          duration: 2000,
+          position: "top-center",
+          iconTheme: {
+            primary: "red",
+            secondary: "#fff",
+          },
+        });
+      }
     } else {
       toast.error("Fill the input!!", {
         duration: 2000,

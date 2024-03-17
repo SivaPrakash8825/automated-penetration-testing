@@ -27,14 +27,14 @@ const SideNav = () => {
   return (
     <>
       <div onClick={() => setOpen(!open)} className=" fixed top-8 left-8 ">
-        <RiMenu2Fill className=" text-2xl" />
+        <RiMenu2Fill className=" text-2xl cursor-pointer" />
       </div>
       <div
         className={`fixed top-0 transition-all z-40 w-[23rem] ${
           open ? "translate-x-0" : "-translate-x-full"
         } left-0 h-[100vh] rounded-tr-3xl shadow-md shadow-black bg-slate-200`}>
         <div onClick={() => setOpen(!open)} className=" absolute top-8 left-5">
-          <IoMdClose className=" text-2xl" />
+          <IoMdClose className=" text-2xl cursor-pointer" />
         </div>
         <div className=" text-center mt-20 text-2xl font-black">
           <h1>Welcome Back!!</h1>
