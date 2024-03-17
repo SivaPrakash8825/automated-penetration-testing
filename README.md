@@ -77,11 +77,15 @@ Open the ***RabbitMQ Server application.*** It should ***automatically start the
 **Automated Remediation:** Investigate the possibility of integrating automated remediation mechanisms to address identified vulnerabilities automatically.<br><br>
 
 # OUTPUT<br>
-**ZAP is Running**<br>
-<img width="960" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/97048551-2bdf-40a1-8d4d-8d53142e35e5"><br>
 
-**Home Page**<br> 
-<img width="960" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/af7b21a2-a57f-4935-9610-1b451fa3c854"><br>
+**Login Page**<br>
+![WhatsApp Image 2024-03-17 at 21 45 47_7f3974b0](https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/193e72d0-f618-4248-99c7-52ce5775ea04)<br><br><br><br>
+
+**ZAP is Running**<br><br><br>
+<img width="960" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/97048551-2bdf-40a1-8d4d-8d53142e35e5"><br><br><br>
+
+**Home Page**<br> <br><br>
+<img width="960" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/af7b21a2-a57f-4935-9610-1b451fa3c854"><br><br><br>
 
 # **Clone this repository:**
 https://github.com/SivaPrakash8825/automated-penetration-testing.git
