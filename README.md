@@ -66,7 +66,9 @@ Open the ***RabbitMQ Server application.*** It should ***automatically start the
 **Reporting and Documentation:** Generates detailed reports and documentation of penetration testing results, including identified vulnerabilities, exploited systems, and recommended remediation steps.<br><br>
 **Customization and Extensibility:** Offers flexibility for users to customize and extend the toolset according to specific requirements and preferences.<br><br>
 **Scheduled Scans:** Allows users to schedule automated penetration tests at regular intervals to continuously monitor and assess the security posture of target environments.<br><br>
+
 # Benefits<br>
+
 **Efficiency:** Streamlines the penetration testing process, saving time and resources for customers.<br><br>
 **Accuracy:** Utilizes advanced security scanning tools to conduct thorough assessments and identify vulnerabilities accurately.<br><br>
 **Actionable Insights:** Empowers customers with actionable insights to improve the security posture of their web applications.<br><br>
