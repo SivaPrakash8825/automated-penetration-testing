@@ -86,6 +86,8 @@ Open the ***RabbitMQ Server application.*** It should ***automatically start the
 
 **Home Page**<br> <br><br>
 <img width="960" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/af7b21a2-a57f-4935-9610-1b451fa3c854"><br><br><br>
+**Final Report**<br><br><br><br>
+<img width="960" alt="image" src="https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/9b2ab9ed-854d-4ad0-b91d-9accffa558a3"><br><br><br>
 
 # **Clone this repository:**
 https://github.com/SivaPrakash8825/automated-penetration-testing.git
