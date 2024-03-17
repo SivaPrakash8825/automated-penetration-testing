@@ -3,7 +3,6 @@ const register = require("../schema/register");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 
-
 router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
   console.log(username);

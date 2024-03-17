@@ -10,32 +10,34 @@ type details = {
   vulsummar: string;
 };
 
-const Generatepdf2 = (zapdata: [string, number | details[]][]) => {
+const Generatepdf2 = (
+  nmapdata: any[],
+  zapdata: [string, number | details[]][]
+) => {
   try {
     const pdf = new jsPDF("landscape");
+    pdf.setFontSize(20);
+    pdf.text("NMAP REPORT : ", 10, 17);
+    if (nmapdata[0].length > 0) {
+      console.log(nmapdata[0]);
 
-    const createTable = () => {
-      const startY = 10;
-      const header = ["Level", "Rate"];
-      const riskgroup: [string, number][] = zapdata.filter(
-        ([key, value]) => key != "details"
-      );
-      console.log(riskgroup);
+      let text = ` Number of Vulnerable Ports Open: ${nmapdata[0].length - 1}`;
+      pdf.setFontSize(15);
+      pdf.text("Summary : ", 10, 27);
+      pdf.setFontSize(13);
+      pdf.text(text, 15, 37);
+      pdf.setFontSize(20);
+      pdf.text("Detials", 10, 47);
 
+      const startY = 52;
       pdf.setFont("helvetica", "normal");
 
       // Set table properties
 
-      const columnstyle: any =
-        header.length == 2
-          ? {
-              0: { cellWidth: 50 },
-            }
-          : { auto: { cellWidth: "auto" } };
       const tableProps: UserOptions = {
         startY,
-        head: [header],
-        body: riskgroup,
+        head: [nmapdata[0][0]],
+        body: nmapdata[0].slice(1),
         theme: "grid",
         tableLineColor: "white",
         styles: {
@@ -44,60 +46,110 @@ const Generatepdf2 = (zapdata: [string, number | details[]][]) => {
           valign: "middle",
           halign: "center",
         },
-        columnStyles: columnstyle,
         headStyles: {
           fillColor: "blue",
         },
       };
 
-      return autoTable(pdf, tableProps);
-    };
-    createTable();
+      autoTable(pdf, tableProps);
+    } else {
+      pdf.setFontSize(20);
+      pdf.text("Error in nmap scanning!!", 20, 57, { align: "center" });
+    }
+    pdf.setFontSize(20);
+    pdf.text("ZAP REPORT : ", 14, pdf.lastAutoTable.finalY + 20);
+    if (zapdata.length == 0) {
+      const startY = pdf.lastAutoTable.finalY + 30;
+      pdf.text("Error in zap scanning!!", 20, startY);
+    } else {
+      const header = ["Type", "Value"];
+      const val: [[string, string[]]] = zapdata.filter(
+        ([key, value]) => key == "details"
+      );
+      let text = `Total Number of vulnerability identified : ${val[0][1].length}`;
+      pdf.setFontSize(20);
+      pdf.text("summary", 20, 57, { align: "center" });
+      pdf.setFontSize(13);
+      pdf.text(text, 30, 57, { align: "center" });
+      const createTable = () => {
+        const startY = pdf.lastAutoTable.finalY + 20;
+        const header = ["Level", "Rate"];
+        const riskgroup: [string, number][] = zapdata.filter(
+          ([key, value]) => key != "details"
+        );
 
-    //   const estimatedFirstTableHeight = (rows.length + 1) * 10; // Assuming each row height is 10
+        pdf.setFont("helvetica", "normal");
 
-    const header = ["Type", "Value"];
-    const val: [[string, string[]]] = zapdata.filter(
-      ([key, value]) => key == "details"
-    );
+        // Set table properties
 
-    val[0][1].map((data) => {
-      const startYFirstTable = pdf.lastAutoTable.finalY + 20;
-      const row = Object.entries(data);
+        const columnstyle: any =
+          header.length == 2
+            ? {
+                0: { cellWidth: 50 },
+              }
+            : { auto: { cellWidth: "auto" } };
+        const tableProps: UserOptions = {
+          startY,
+          head: [header],
+          body: riskgroup,
+          theme: "grid",
+          tableLineColor: "white",
+          styles: {
+            fontSize: 9,
+            cellPadding: 2,
+            valign: "middle",
+            halign: "center",
+          },
+          columnStyles: columnstyle,
+          headStyles: {
+            fillColor: "blue",
+          },
+        };
 
-      pdf.setFontSize(10);
-
-      const tableProps2: UserOptions = {
-        startY: startYFirstTable,
-        head: [header],
-        body: row,
-        theme: "grid",
-        tableLineColor: "black",
-        styles: {
-          fontSize: 10,
-          cellPadding: 2,
-          valign: "middle",
-          halign: "center",
-        },
-        columnStyles: {
-          0: { cellWidth: 70, fontStyle: "bold" },
-        },
-        didDrawCell: function (data) {
-          // Check if it's the first column
-          if (data.column.index === 0) {
-            // Set font style to bold
-            pdf.setFont("helvetica", "bold");
-          } else {
-            // Reset font style to normal for other columns
-            pdf.setFont("helvetica", "normal");
-          }
-        },
-        headStyles: {
-          fillColor: "blue",
-        },
+        return autoTable(pdf, tableProps);
       };
-      autoTable(pdf, tableProps2);
-    });
+      createTable();
+
+      //   const estimatedFirstTableHeight = (rows.length + 1) * 10; // Assuming each row height is 10
+
+      val[0][1].map((data) => {
+        const startYFirstTable = pdf.lastAutoTable.finalY + 20;
+        const row = Object.entries(data);
+
+        pdf.setFontSize(10);
+
+        const tableProps2: UserOptions = {
+          startY: startYFirstTable,
+          head: [header],
+          body: row,
+          theme: "grid",
+          tableLineColor: "black",
+          styles: {
+            fontSize: 10,
+            cellPadding: 2,
+            valign: "middle",
+            halign: "center",
+          },
+          columnStyles: {
+            0: { cellWidth: 70, fontStyle: "bold" },
+          },
+          didDrawCell: function (data) {
+            // Check if it's the first column
+            if (data.column.index === 0) {
+              // Set font style to bold
+              pdf.setFont("helvetica", "bold");
+            } else {
+              // Reset font style to normal for other columns
+              pdf.setFont("helvetica", "normal");
+            }
+          },
+          headStyles: {
+            fillColor: "blue",
+          },
+        };
+        autoTable(pdf, tableProps2);
+      });
+    }
 
     pdf.save(`report.pdf`);
   } catch (e) {

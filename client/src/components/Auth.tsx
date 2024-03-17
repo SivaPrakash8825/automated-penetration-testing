@@ -43,9 +43,8 @@ const Auth = ({ type }: Props) => {
         email: email,
         password: password,
       });
-      console.log(data);
-      localStorage.setItem("pentest", JSON.stringify(data));
-      if (data) {
+      if (data != "invalid") {
+        localStorage.setItem("pentest", JSON.stringify(data));
         route.push("/home");
       }
     } else {
@@ -55,54 +54,56 @@ const Auth = ({ type }: Props) => {
 
   return (
     <div className="w-screen  h-screen flex justify-center items-center">
-      <Image src={"/rainbow-vortex.svg"} className=" -z-10" alt="image" fill />
-      <div className=" w-4/6 h-3/4 bg-white flex rounded-3xl overflow-hidden">
-        <div className=" flex-1 w-72 flex text-black items-center justify-center transition-all flex-col gap-y-3 h-auto py-5 px-7 bg-white rounded-lg ">
-          {type == "signup" && (
+      <Image src={"/bg-2.svg"} className=" -z-10" alt="image" fill />
+      <div className=" w-4/6 h-3/4 bg-gray-500 flex rounded-3xl overflow-hidden">
+        <div className=" flex-1 w-72 flex text-black items-center justify-center transition-all flex-col gap-y-3 h-auto py-5 px-7 bg-gray-300/90 rounded-lg ">
+          <div className=" bg-white grid place-content-center gap-y-4 border border-black rounded-3xl py-10 px-8">
+            {type == "signup" && (
+              <input
+                value={username}
+                className="border border-black px-3 w-72 py-2 rounded-xl outline-none "
+                onChange={(e) => setUserName(e.target.value)}
+                type="text"
+                placeholder="UserName"
+                required
+              />
+            )}
             <input
-              value={username}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
               className="border border-black px-3 w-72 py-2 rounded-xl outline-none "
-              onChange={(e) => setUserName(e.target.value)}
-              type="text"
-              placeholder="UserName"
+              placeholder="E-mail"
               required
             />
-          )}
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            className="border border-black px-3 w-72 py-2 rounded-xl outline-none "
-            placeholder="E-mail"
-            required
-          />
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border border-black px-3 w-72 py-2 rounded-xl outline-none "
-            type="password"
-            placeholder="Password"
-            required
-          />
-          {type == "signup" && (
             <input
-              value={conPassword}
-              onChange={(e) => setConPassword(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="border border-black px-3 w-72 py-2 rounded-xl outline-none "
-              type="Password"
-              placeholder="confirm password"
+              type="password"
+              placeholder="Password"
               required
             />
-          )}
-          <Button
-            title={`${type == "signin" ? "login" : "register"}`}
-            onclick={() => (type == "signin" ? Login() : Register())}
-          />
+            {type == "signup" && (
+              <input
+                value={conPassword}
+                onChange={(e) => setConPassword(e.target.value)}
+                className="border border-black px-3 w-72 py-2 rounded-xl outline-none "
+                type="Password"
+                placeholder="confirm password"
+                required
+              />
+            )}
+            <Button
+              title={`${type == "signin" ? "login" : "register"}`}
+              onclick={() => (type == "signin" ? Login() : Register())}
+            />
 
-          <AngerTag
-            title={`${type == "signin" ? "signup" : "signin"}`}
-            page={`auth/${type == "signin" ? "signup" : "signin"}`}
-          />
+            <AngerTag
+              title={`${type == "signin" ? "signup" : "signin"}`}
+              page={`auth/${type == "signin" ? "signup" : "signin"}`}
+            />
+          </div>
         </div>
         <div className="flex-1  relative">
           <div className=" absolute w-full h-full z-20 flex justify-center items-center ">

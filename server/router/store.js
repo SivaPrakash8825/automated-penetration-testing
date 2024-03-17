@@ -1,8 +1,6 @@
 const requestmodel = require("../schema/request");
 const express = require("express");
-
 const router = express.Router();
-
 
 router.post("/getuserrequest", async (req, res) => {
   const { userId } = req.body;
@@ -17,7 +15,7 @@ router.post("/getuserrequest", async (req, res) => {
 
 router.get("/:urlId", async (req, res) => {
   const { urlId } = req.params;
-  console.log(urlId);
+
   try {
     const result = await requestmodel.findOne({ urlId: urlId });
     return res.status(200).send(result);
