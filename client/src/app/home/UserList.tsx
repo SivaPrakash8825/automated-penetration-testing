@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { FaFileDownload } from "react-icons/fa";
-import { IoIosArrowDropdown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { TiWarning } from "react-icons/ti";
 import axios from "axios";
@@ -10,6 +9,7 @@ import { SiVerizon } from "react-icons/si";
 import Generatepdf2 from "@/utils/GenerateReport";
 import { Toaster } from "react-hot-toast";
 import Image from "next/image";
+import Jsondata from "./data";
 
 type cardDataType = {
   url: string;
@@ -31,17 +31,16 @@ type details = {
 };
 
 const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
-  console.log(allUrl);
-
   const ref = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const genrateReport = async (urlId: string) => {
     const { data } = await axios.get(`http://localhost:3030/store/${urlId}`);
     console.log(data);
-    const nmap: string[][] = JSON.parse(data.nmap);
+    const nmap: any = JSON.parse(data.nmap);
     const nmapdata = [];
-    const zapval = [];
+    const zapval: any = [];
+
     // 0 index contain the header
     if (nmap != "error") {
       nmap[0].splice(1, 0, "PROTOCOL");
@@ -49,12 +48,20 @@ const UserList = React.memo(({ allUrl }: { allUrl: cardDataType[] }) => {
       for (const [index, value] of nmap.entries()) {
         if (index) {
           const arr = value[0].split("/");
-          nmap[index] = [...arr, value[1], value[2], "close the port"];
+          const recommend = Jsondata.filter(
+            (element) => element.service.toLowerCase() == value[2].toLowerCase()
+          );
+
+          nmap[index] = [
+            ...arr,
+            value[1],
+            value[2],
+            recommend[0].recommendation,
+          ];
         }
       }
       nmapdata.push(nmap);
     }
-
     const zapdata: [string, number | details[]][] | string = JSON.parse(
       data.zap
     );
