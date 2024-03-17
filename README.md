@@ -44,7 +44,7 @@ To set up and run the server application:
 
 Open the ***ZAP Server application*** and click ***START***.
 
-(OR)
+**(OR)
 
 Use the following command in the terminal:<br><br>
 Zap.bat
