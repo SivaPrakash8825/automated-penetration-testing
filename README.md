@@ -56,7 +56,6 @@ Open the ***RabbitMQ Server application.*** It should ***automatically start the
 
 # Methodology<br>
 
-
 ![Bone White Black Simple Move Forward Desktop Wallpaper](https://github.com/SivaPrakash8825/automated-penetration-testing/assets/122080340/ec5cde82-483b-4526-a571-faaee4d9b488)
 
 
