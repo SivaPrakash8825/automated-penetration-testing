@@ -29,8 +29,8 @@ const Homepage = () => {
   const sendUrl = async () => {
     try {
       if (url) {
-        const response = await fetch(url); // Replace with your desired host's domain
-        if (response.ok) {
+        // const response = await fetch(url); // Replace with your desired host's domain
+        if (true) {
           if (
             url.trim().startsWith("http://") ||
             url.trim().startsWith("https://")
