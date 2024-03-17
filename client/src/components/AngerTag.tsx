@@ -9,7 +9,7 @@ type Props = {
 const AngerTag = ({ title, page }: Props) => {
   return (
     <Link
-      className="w-full text-red-600 border text-center py-1 rounded-2xl"
+      className="w-full text-black border text-center py-1 rounded-2xl"
       href={`/${page}`}>
       {title}
     </Link>

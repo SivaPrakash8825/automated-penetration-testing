@@ -2,14 +2,16 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { IoSend } from "react-icons/io5";
+import Loading from "./Loading";
 
 type Props = {
   sendUrl: () => void;
   url: string;
   setUrl: React.Dispatch<React.SetStateAction<string>>;
+  loading: boolean;
 };
 
-const InputField = ({ sendUrl, url, setUrl }: Props) => {
+const InputField = ({ sendUrl, url, setUrl, loading }: Props) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const handleKeyPress = (e: KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -34,8 +36,12 @@ const InputField = ({ sendUrl, url, setUrl }: Props) => {
             className=" w-full h-14 outline-none"
             placeholder="Enter The URL To Be Scan"
           />
-          <div onClick={sendUrl} className=" bg-black p-2 rounded-lg">
-            <IoSend className="text-white text-xl " />
+          <div
+            onClick={sendUrl}
+            className={` bg-black cursor-pointer ${
+              loading ? "pointer-events-none" : ""
+            } p-2 rounded-lg`}>
+            {loading ? <Loading /> : <IoSend className="text-white text-xl " />}
           </div>
         </div>
       </div>

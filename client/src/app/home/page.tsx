@@ -5,7 +5,7 @@ import UserList from "./UserList";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { v4 as uuid } from "uuid";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import SideNav from "@/components/SideNav";
 
 type Props = {
@@ -24,33 +24,55 @@ type cardDataType = {
 
 const Homepage = () => {
   const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(false);
   const [allUrl, setAllUrl] = useState<cardDataType[]>([]);
   const sendUrl = async () => {
-    if (url) {
-      if (
-        url.trim().startsWith("http://") ||
-        url.trim().startsWith("https://")
-      ) {
-        const newid = uuid();
-        const { data } = await axios.post("http://localhost:3030/test/scan", {
-          url: url.trim(),
-          userId: JSON.parse(localStorage.getItem("pentest") as string)["_id"],
-          urlId: newid,
-        });
-        setAllUrl((pre) => [
-          ...pre,
-          {
-            date: "",
-            status: "scheduled",
-            url: url,
-            urlId: newid,
-            nmapstatus: false,
-            zapstatus: false,
-          },
-        ]);
-        setUrl("");
+    try {
+      if (url) {
+        const response = await fetch(url); // Replace with your desired host's domain
+        if (response.ok) {
+          if (
+            url.trim().startsWith("http://") ||
+            url.trim().startsWith("https://")
+          ) {
+            setLoading(true);
+            const newid = uuid();
+            const { data } = await axios.post(
+              "http://localhost:3030/test/scan",
+              {
+                url: url.trim(),
+                userId: JSON.parse(localStorage.getItem("pentest") as string)[
+                  "_id"
+                ],
+                urlId: newid,
+              }
+            );
+            setAllUrl((pre) => [
+              ...pre,
+              {
+                date: "",
+                status: "scheduled",
+                url: url,
+                urlId: newid,
+                nmapstatus: false,
+                zapstatus: false,
+              },
+            ]);
+            setLoading(false);
+            setUrl("");
+          } else {
+            toast.error("Invalid url", {
+              duration: 2000,
+              position: "top-center",
+              iconTheme: {
+                primary: "red",
+                secondary: "#fff",
+              },
+            });
+          }
+        }
       } else {
-        toast.error("Invalid url", {
+        toast.error("Fill the input!!", {
           duration: 2000,
           position: "top-center",
           iconTheme: {
@@ -59,8 +81,8 @@ const Homepage = () => {
           },
         });
       }
-    } else {
-      toast.error("Fill the input!!", {
+    } catch (error) {
+      toast.error("host is down", {
         duration: 2000,
         position: "top-center",
         iconTheme: {
@@ -79,6 +101,7 @@ const Homepage = () => {
       },
       { withCredentials: true }
     );
+
     setAllUrl(data);
   };
 
@@ -89,6 +112,8 @@ const Homepage = () => {
       JSON.parse(localStorage.getItem("pentest") as string)["_id"]
     );
     socket.on("status", (val) => {
+      console.log(val);
+
       setAllUrl((prevUrls) => {
         const updatedUrls = prevUrls.map((data) => {
           if (data.urlId === val.urlId) {
@@ -117,7 +142,12 @@ const Homepage = () => {
     <div className=" overflow-x-hidden">
       <SideNav />
       <UserList allUrl={allUrl} />
-      <InputField sendUrl={sendUrl} url={url} setUrl={setUrl} />
+      <InputField
+        sendUrl={sendUrl}
+        url={url}
+        setUrl={setUrl}
+        loading={loading}
+      />
     </div>
   );
 };

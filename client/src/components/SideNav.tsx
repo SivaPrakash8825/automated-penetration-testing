@@ -43,7 +43,7 @@ const SideNav = () => {
         <div className="absolute bottom-0 w-full">
           <div
             onClick={logout}
-            className=" w-full text- py-4 border-t flex items-center gap-x-4 px-5 border-black">
+            className=" w-full text- py-4 border-t flex cursor-pointer items-center gap-x-4 px-5 border-black">
             <span>
               <CgLogOut />
             </span>
