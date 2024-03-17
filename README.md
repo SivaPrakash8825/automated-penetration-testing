@@ -11,6 +11,7 @@ The application generates comprehensive reports for customers to download, provi
 
 **Automated Penetration Testing comprises the following components:**
 
+
 <br>**Client-Side Application:** Provides a user-friendly interface for customers to submit their web application URLs and retrieve reports.<br><br>
 **Server-Side Application:** Handles the validation of submitted URLs, initiates automated penetration testing using ZAP and Nmap CLI commands, and generates comprehensive reports.<br><br>
 **ZAP Server:** Utilized for automated security scanning and vulnerability detection within the target web applications.<br><br>
